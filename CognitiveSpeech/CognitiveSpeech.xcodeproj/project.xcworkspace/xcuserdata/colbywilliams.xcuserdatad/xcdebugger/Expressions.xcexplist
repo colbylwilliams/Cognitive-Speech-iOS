@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "closure #1 in SpeakerIdClient.createIdentificationProfileEnrollment(profileId:fileUrl:callback:):SpeakerIdClient.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "String">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SpeakerIdClient.createIdentificationProfile(callback:):SpeakerIdClient.swift">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
