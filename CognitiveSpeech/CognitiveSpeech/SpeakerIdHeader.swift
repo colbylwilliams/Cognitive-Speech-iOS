@@ -8,21 +8,30 @@
 
 import Foundation
 
-enum SpeakerIdHeader : String {
+struct SpeakerIdHeaders {
+	static let contentTypeKey = "Content-Type"
+	static let contentTypeValue = "application/json"
 	
-	case contentType = "Content-Type"
-	case subscriptionKey = "Ocp-Apim-Subscription-Key"
-	
-	var key: String {
-		return self.rawValue
-	}
-	
-	var value: String {
-		switch self {
-		case .contentType:
-			return "application/json"
-		case .subscriptionKey:
-			return "0e71b5bf7bc645a182196bf58789268c"
-		}
-	}
+	static let subscriptionKey = "Ocp-Apim-Subscription-Key"
+	static let subscriptionValue = "0e71b5bf7bc645a182196bf58789268c"
 }
+//
+//enum SpeakerIdHeader : String {
+//	
+//	case contentType = "Content-Type"
+//	case subscriptionKey = "Ocp-Apim-Subscription-Key"
+//	
+//	var key: String {
+//		return self.rawValue
+//	}
+//	
+//	var value: String {
+//		switch self {
+//		case .contentType:
+//			return "application/json"
+//		case .subscriptionKey:
+//			return "0e71b5bf7bc645a182196bf58789268c"
+//		}
+//	}
+//}
+

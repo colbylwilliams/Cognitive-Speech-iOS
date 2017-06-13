@@ -23,13 +23,40 @@ enum SpeakerIdUrl : String {
 		return URL(string: self.path)
 	}
 	
-	func enrollUrl (_ profileId: String) -> URL? {
-//		return URL(string: "\(self.enrollPath(profileId))?shortAudio=true")
-		return URL(string: self.enrollPath(profileId))
+	func verifyUrl(profileId: String) -> URL? {
+		let string = "\(self.path)?verificationProfileId=\(profileId)"
+		return URL(string: string)
+	}
+	
+	func identifyUrl(useShort: Bool = false, profileIds: String...) -> URL? {
+		guard profileIds.count > 0 else {
+			print("Must provide one or more profileIds")
+			return nil
+		}
+		
+		if profileIds.count > 10 {
+			print("Speech API only supports up to 10 profileIds")
+		}
+		
+		let profileIdsParam = profileIds.prefix(10).joined(separator: ",")
+		
+		var string = "\(self.path)?identificationProfileIds=\(profileIdsParam)"
+		
+		if useShort { string += "&shortAudio=true" }
+		
+		return URL(string: string)
+	}
+	
+	func enrollUrl (_ profileId: String, useShort: Bool = false) -> URL? {
+		var string = self.enrollPath(profileId)
+		
+		if useShort { string += "?shortAudio=true" }
+		
+		return URL(string: string)
 	}
 	
 	func resetUrl (_ profileId: String) -> URL? {
-		return URL(string: self.enrollPath(profileId))
+		return URL(string: self.resetPath(profileId))
 	}
 	
 	func url(withId: String) -> URL? {

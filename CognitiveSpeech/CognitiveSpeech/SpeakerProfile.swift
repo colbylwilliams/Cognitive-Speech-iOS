@@ -79,36 +79,11 @@ class SpeakerProfiles {
 			
 			if profile == nil {
 				print("   did not find existing profile in SpeakerProfiles.profiles, creating new profile")
-				profile = SpeakerProfile()
-				profile!.identificationProfileId = identificationProfileId
+				profile = SpeakerProfile(fromJson: dict)
 				self.profiles.append(profile!)
-			} else {
+			} else if let profile = profile {
 				print("   found existing profile in SpeakerProfiles.profiles, updating values")
-			}
-			
-			if let profile = profile {
-				
-//				let formatter = ISO8601DateFormatter()
-//				formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-				
-				if let locale = dict[SpeakerProfile.localeKey] as? String{
-					profile.locale = locale
-				}
-				if let enrollmentSpeechTime = dict[SpeakerProfile.enrollmentSpeechTimeKey] as? Double {
-					profile.enrollmentSpeechTime = enrollmentSpeechTime
-				}
-				if let remainingEnrollmentSpeechTime = dict[SpeakerProfile.remainingEnrollmentSpeechTimeKey] as? Double {
-					profile.remainingEnrollmentSpeechTime = remainingEnrollmentSpeechTime
-				}
-				if let createdDateTime = dict[SpeakerProfile.createdDateTimeKey] as? String {
-					profile.createdDateTime = profile.isoFormatter?.date(from: createdDateTime)
-				}
-				if let lastActionDateTime = dict[SpeakerProfile.lastActionDateTimeKey] as? String {
-					profile.lastActionDateTime = profile.isoFormatter?.date(from: lastActionDateTime)
-				}
-				if let enrollmentStatus = dict[SpeakerProfile.enrollmentStatusKey] as? String {
-					profile.enrollmentStatus = enrollmentStatus
-				}
+				profile.update(fromJson: dict)
 			}
 		}
 	}
@@ -122,7 +97,7 @@ class SpeakerProfiles {
 			print("               : remainingEnrollmentSpeechTime: \(profile.remainingEnrollmentSpeechTime?.debugDescription ?? "nil")")
 			print("               : createdDateTime: \(profile.createdDateTime?.debugDescription ?? "nil")")
 			print("               : lastActionDateTime: \(profile.lastActionDateTime?.debugDescription ?? "nil")")
-			print("               : enrollmentStatus: \(profile.enrollmentStatus?.debugDescription ?? "nil")")
+			print("               : enrollmentStatus: \(profile.enrollmentStatus?.rawValue ?? "nil")")
 		}
 	}
 }
@@ -163,7 +138,7 @@ class SpeakerProfile {
 	var remainingEnrollmentSpeechTime: Double? // 0.0,
 	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
 	var lastActionDateTime: Date? // "2015-04-23T18:25:43.511Z",
-	var enrollmentStatus: String? // "Enrolled"
+	var enrollmentStatus: SpeakerProfileEnrollmentStatus? // "Enrolled"
 	
 	var createdDateTimeString: String {
 		if let createdDateTime = createdDateTime {
@@ -179,9 +154,39 @@ class SpeakerProfile {
 		return ""
 	}
 	
+	init(fromJson dict: [String:Any]) {
+		if let identificationProfileId = dict[SpeakerProfile.identificationProfileIdKey] as? String {
+			self.identificationProfileId = identificationProfileId
+		}
+		self.update(fromJson: dict)
+	}
+	
+	func update(fromJson dict: [String:Any]) {
+//		if let identificationProfileId = dict[SpeakerProfile.identificationProfileIdKey] as? String {
+//			self.identificationProfileId = identificationProfileId
+//		}
+		if let locale = dict[SpeakerProfile.localeKey] as? String{
+			self.locale = locale
+		}
+		if let enrollmentSpeechTime = dict[SpeakerProfile.enrollmentSpeechTimeKey] as? Double {
+			self.enrollmentSpeechTime = enrollmentSpeechTime
+		}
+		if let remainingEnrollmentSpeechTime = dict[SpeakerProfile.remainingEnrollmentSpeechTimeKey] as? Double {
+			self.remainingEnrollmentSpeechTime = remainingEnrollmentSpeechTime
+		}
+		if let createdDateTime = dict[SpeakerProfile.createdDateTimeKey] as? String {
+			self.createdDateTime = isoFormatter?.date(from: createdDateTime)
+		}
+		if let lastActionDateTime = dict[SpeakerProfile.lastActionDateTimeKey] as? String {
+			self.lastActionDateTime = isoFormatter?.date(from: lastActionDateTime)
+		}
+		if let enrollmentStatusString = dict[SpeakerProfile.enrollmentStatusKey] as? String, let enrollmentStatus = SpeakerProfileEnrollmentStatus(rawValue: enrollmentStatusString) {
+			self.enrollmentStatus = enrollmentStatus
+		}
+	}
 }
 
-enum EnrollmentStatus : String {
+enum SpeakerProfileEnrollmentStatus : String {
 	case enrolling = "Enrolling"	// profile is currently enrolling and is not ready for identification
 	case training = "Training"		// profile is currently training and is not ready for identification
 	case enrolled = "Enrolled"		// profile is currently enrolled and is ready for identification

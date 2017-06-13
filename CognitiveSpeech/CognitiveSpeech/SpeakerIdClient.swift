@@ -30,12 +30,8 @@ class SpeakerIdClient : NSObject {
 		
 		if let url = SpeakerIdUrl.identificationProfiles.url, let data = try? JSONSerialization.data(withJSONObject: ["locale":"en-us"], options: []) {
 			
-			var request = URLRequest(url: url)
-			
+			var request = createRequest(url: url, method: "POST", contentType: SpeakerIdHeaders.contentTypeValue)
 			request.httpBody = data
-			request.httpMethod = "POST"
-			request.addValue(SpeakerIdHeader.contentType.value, forHTTPHeaderField: SpeakerIdHeader.contentType.key)
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -59,10 +55,7 @@ class SpeakerIdClient : NSObject {
 		
 		if let url = SpeakerIdUrl.identificationProfiles.url(withId: profileId) {
 			
-			var request = URLRequest(url: url)
-			
-			request.httpMethod = "GET"
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
+			let request = createRequest(url: url)
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -100,10 +93,7 @@ class SpeakerIdClient : NSObject {
 		} else if let url = SpeakerIdUrl.identificationProfiles.url {
 			print("   no locally cached profiles, querying service for profiles")
 			
-			var request = URLRequest(url: url)
-			
-			request.httpMethod = "GET"
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
+			let request = createRequest(url: url)
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -129,10 +119,7 @@ class SpeakerIdClient : NSObject {
 		
 		if let url = SpeakerIdUrl.identificationProfiles.url(withId: profileId) {
 			
-			var request = URLRequest(url: url)
-			
-			request.httpMethod = "DELETE"
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
+			let request = createRequest(url: url, method: "DELETE")
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -154,10 +141,7 @@ class SpeakerIdClient : NSObject {
 		
 		if let url = SpeakerIdUrl.identificationProfiles.resetUrl(profileId) {
 			
-			var request = URLRequest(url: url)
-			
-			request.httpMethod = "POST"
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
+			let request = createRequest(url: url, method: "POST")
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
@@ -167,7 +151,7 @@ class SpeakerIdClient : NSObject {
 				}
 				if let profile = self.speakerProfiles.profiles.first(where: { $0.identificationProfileId == profileId }) {
 					profile.enrollmentSpeechTime = 0.0
-					profile.enrollmentStatus = "Enrolling"
+					profile.enrollmentStatus = SpeakerProfileEnrollmentStatus.enrolling
 				}
 				callback()
 			}).resume()
@@ -179,13 +163,9 @@ class SpeakerIdClient : NSObject {
 	func createIdentificationProfileEnrollment(profileId: String, fileUrl: URL, callback: @escaping () -> ()) {
 		print("Create Identification Profile Enrollment (\(profileId))...")
 		
-		if let url = SpeakerIdUrl.identificationProfiles.enrollUrl(profileId) {
+		if let url = SpeakerIdUrl.identificationProfiles.enrollUrl(profileId, useShort: true) {
 			
-			var request = URLRequest(url: url)
-			
-			request.httpMethod = "POST"
-			request.addValue(SpeakerIdHeader.contentType.value, forHTTPHeaderField: SpeakerIdHeader.contentType.key)
-			request.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
+			let request = createRequest(url: url, method: "POST", contentType: SpeakerIdHeaders.contentTypeValue)
 			
 			toggleNetworkActivityIndicatorVisible(true)
 			URLSession.shared.uploadTask(with: request, fromFile: fileUrl, completionHandler: { (data, response, error) in
@@ -197,28 +177,11 @@ class SpeakerIdClient : NSObject {
 					
 					print("Setting up Timer...")
 					
-					self.timer = Timer.init(timeInterval: 2, repeats: true, block: { (t) in
-						print("Checking operation status...")
-						
-						var oppRequest = URLRequest(url: operationUrl)
-						oppRequest.addValue(SpeakerIdHeader.subscriptionKey.value, forHTTPHeaderField: SpeakerIdHeader.subscriptionKey.key)
-						
-						self.toggleNetworkActivityIndicatorVisible(true)
-						URLSession.shared.dataTask(with: oppRequest, completionHandler: { (d, r, e) in
-							self.toggleNetworkActivityIndicatorVisible(false)
-							if e != nil {
-								print(e!.localizedDescription)
-							}
-							if let d = d, let s = try? JSONSerialization.jsonObject(with: d) as? [String:Any] {
-								if let s = s, let status = s["status"] as? String {
-									print("   status: \(status)")
-									if status == "failed" || status == "succeeded" {
-										self.timer.invalidate()
-										callback()
-									}
-								}
-							}
-						}).resume()
+					self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
+						self.checkOperationStatus(operationUrl: operationUrl, callback: { r in
+							
+							print("Finished!")
+						})
 					})
 					
 					RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
@@ -227,25 +190,48 @@ class SpeakerIdClient : NSObject {
 		}
 	}
 	
-	var opUrl: URL!
 	
-	@objc func checkOperation() {
+	func checkOperationStatus(operationUrl: URL, callback: @escaping (SpeakerOperationResult) -> ()) {
 		print("Checking operation status...")
+		
+		var oppRequest = URLRequest(url: operationUrl)
+		oppRequest.addValue(SpeakerIdHeaders.subscriptionValue, forHTTPHeaderField: SpeakerIdHeaders.subscriptionKey)
+		
 		self.toggleNetworkActivityIndicatorVisible(true)
-		URLSession.shared.dataTask(with: opUrl, completionHandler: { (d, r, e) in
+		URLSession.shared.dataTask(with: oppRequest, completionHandler: { (opData, opResponse, opError) in
 			self.toggleNetworkActivityIndicatorVisible(false)
-			if e != nil {
-				print(e!.localizedDescription)
+			if let opError = opError {
+				print(opError.localizedDescription)
 			}
-			if let d = d, let s = try? JSONSerialization.jsonObject(with: d) as? [String:Any] {
-				if let s = s, let status = s["status"] as? String {
-					print("Status: \(status)")
-					if status == "failed" || status == "succeeded" {
-						self.timer.invalidate()
+			if let opData = opData, let opJson = try? JSONSerialization.jsonObject(with: opData) as? [String:Any] {
+				if let opJson = opJson {
+					let speakerResult = SpeakerOperationResult(fromJson: opJson)
+					if let speakerStatus = speakerResult.status {
+						if speakerStatus == .succeeded || speakerStatus == .failed {
+							self.timer.invalidate()
+							self.timer = nil
+							callback(speakerResult)
+						}
 					}
 				}
 			}
 		}).resume()
+	}
+	
+	
+	func createRequest(url: URL, method: String = "GET", contentType: String = "") -> URLRequest {
+		
+		var request = URLRequest(url: url)
+		
+		request.httpMethod = method
+		
+		if !contentType.isEmpty {
+			request.addValue(contentType, forHTTPHeaderField: "Content-Type")
+		}
+		
+		request.addValue(SpeakerIdHeaders.subscriptionValue, forHTTPHeaderField: SpeakerIdHeaders.subscriptionKey)
+		
+		return request
 	}
 	
 	

@@ -57,7 +57,7 @@ class ProfileTableViewController: UITableViewController {
 		let profile = SpeakerIdClient.shared.profiles[indexPath.row]
 		
 		cell.textLabel?.text = profile.identificationProfileId		
-		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus ?? "") | created:\(profile.createdDateTimeString)"
+		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString)"
 		
         return cell
     }

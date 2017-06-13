@@ -18,6 +18,9 @@
 		B55845781EEF1DD100DEC7B9 /* SpeakerIdHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */; };
 		B558457A1EEF242A00DEC7B9 /* SpeakerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */; };
 		B558457C1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */; };
+		B5F747401EF0105E00F94F87 /* SpeakerVerificationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */; };
+		B5F747421EF013E800F94F87 /* SpeakerOperationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */; };
+		B5F747441EF0175900F94F87 /* SpeakerIdentificationReslut.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +37,9 @@
 		B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdHeader.swift; sourceTree = "<group>"; };
 		B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerProfile.swift; sourceTree = "<group>"; };
 		B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
+		B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerVerificationResult.swift; sourceTree = "<group>"; };
+		B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerOperationResult.swift; sourceTree = "<group>"; };
+		B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdentificationReslut.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +84,9 @@
 				B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */,
 				B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */,
 				B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */,
+				B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */,
+				B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */,
+				B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */,
 			);
 			path = CognitiveSpeech;
 			sourceTree = "<group>";
@@ -156,9 +165,12 @@
 				B55845761EEF16BF00DEC7B9 /* SpeakerIdKey.swift in Sources */,
 				B55845741EEF057700DEC7B9 /* SpeakerIdUrl.swift in Sources */,
 				B549BAFC1EEEE6BE002D3A23 /* AppDelegate.swift in Sources */,
+				B5F747441EF0175900F94F87 /* SpeakerIdentificationReslut.swift in Sources */,
+				B5F747401EF0105E00F94F87 /* SpeakerVerificationResult.swift in Sources */,
 				B55845781EEF1DD100DEC7B9 /* SpeakerIdHeader.swift in Sources */,
 				B55845721EEF04C300DEC7B9 /* SpeakerIdClient.swift in Sources */,
 				B558457A1EEF242A00DEC7B9 /* SpeakerProfile.swift in Sources */,
+				B5F747421EF013E800F94F87 /* SpeakerOperationResult.swift in Sources */,
 				B558457C1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift in Sources */,
 				B549BB0E1EEEE71F002D3A23 /* StartViewController.swift in Sources */,
 			);
