@@ -13,4 +13,7 @@ struct SpeakerPreferenceKeys {
 	static let shortAudio = "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").shortAudio"
 	static let selectedIdentificationProfileId = "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").selectedIdentificationProfileId"
 	static let selectedVerificationProfileId = "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").selectedVerificationProfileId"
+	static func nameForProfileId (profileId: String) -> String {
+		return "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").nameForProfileId.\(profileId)"
+	}
 }

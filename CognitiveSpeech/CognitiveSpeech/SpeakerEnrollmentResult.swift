@@ -18,16 +18,14 @@ class SpeakerIdentificationEnrollmentResult : SpeakerEnrollmentResult {
 	var speechTime: Double? // 0.0
 	var enrollmentSpeechTime: Double? // 0.0
 	
-	override init(fromJson dict: [String:Any]) {
+	override init?(fromJson dict: [String:Any]?) {
 		super.init(fromJson: dict)
-		if let remainingEnrollmentSpeechTime = dict[remainingEnrollmentSpeechTimeKey] as? Double {
+		if let dict = dict, let remainingEnrollmentSpeechTime = dict[remainingEnrollmentSpeechTimeKey] as? Double, let speechTime = dict[speechTimeKey] as? Double, let enrollmentSpeechTime = dict[enrollmentSpeechTimeKey] as? Double {
 			self.remainingEnrollmentSpeechTime = remainingEnrollmentSpeechTime
-		}
-		if let speechTime = dict[speechTimeKey] as? Double {
 			self.speechTime = speechTime
-		}
-		if let enrollmentSpeechTime = dict[enrollmentSpeechTimeKey] as? Double {
 			self.enrollmentSpeechTime = enrollmentSpeechTime
+		} else {
+			return nil
 		}
 	}
 }
@@ -43,16 +41,14 @@ class SpeakerVerificationEnrollmentResult : SpeakerEnrollmentResult {
 	var remainingEnrollments: Double?
 	var phrase: String?
 	
-	override init(fromJson dict: [String:Any]) {
+	override init?(fromJson dict: [String:Any]?) {
 		super.init(fromJson: dict)
-		if let enrollmentsCount = dict[enrollmentsCountKey] as? Double {
+		if let dict = dict, let enrollmentsCount = dict[enrollmentsCountKey] as? Double, let remainingEnrollments = dict[remainingEnrollmentsKey] as? Double, let phrase = dict[phraseKey] as? String {
 			self.enrollmentsCount = enrollmentsCount
-		}
-		if let remainingEnrollments = dict[remainingEnrollmentsKey] as? Double {
 			self.remainingEnrollments = remainingEnrollments
-		}
-		if let phrase = dict[phraseKey] as? String {
 			self.phrase = phrase
+		} else {
+			return nil
 		}
 	}
 }
@@ -64,9 +60,11 @@ class SpeakerEnrollmentResult {
 	
 	var enrollmentStatus: SpeakerProfileEnrollmentStatus? // "Enrolled"
 	
-	init(fromJson dict: [String:Any]) {
-		if let enrollmentStatusString = dict[enrollmentStatusKey] as? String, let enrollmentStatus = SpeakerProfileEnrollmentStatus(rawValue: enrollmentStatusString) {
+	init?(fromJson dict: [String:Any]?) {
+		if let dict = dict, let enrollmentStatusString = dict[enrollmentStatusKey] as? String, let enrollmentStatus = SpeakerProfileEnrollmentStatus(rawValue: enrollmentStatusString) {
 			self.enrollmentStatus = enrollmentStatus
+		} else {
+			return nil
 		}
 	}
 }

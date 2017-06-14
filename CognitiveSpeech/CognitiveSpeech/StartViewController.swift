@@ -15,16 +15,32 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	var audioRecorder: AVAudioRecorder?
 	var audioPlayer: AVAudioPlayer?
 	
+	@IBOutlet weak var profileTitleLabel: UILabel!
+	@IBOutlet weak var profileIdLabel: UILabel!
+	@IBOutlet weak var profileStatusLabel: UILabel!
+	@IBOutlet weak var profileCreatedLabel: UILabel!
+	@IBOutlet weak var profileUpdatedLabel: UILabel!
+	@IBOutlet weak var profileRemainingLabel: UILabel!
+	@IBOutlet weak var profileTimeCountLabel: UILabel!
+	
 	@IBOutlet weak var talkButton: UIButton!
 	@IBOutlet weak var playButton: UIButton!
 	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
 	
+	private	var _dateFormatter: DateFormatter?
+	var dateFormatter: DateFormatter? {
+		if _dateFormatter == nil {
+			_dateFormatter = DateFormatter()
+			_dateFormatter?.dateStyle = .short
+			_dateFormatter?.timeStyle = .short
+		}
+		return _dateFormatter!
+	}
+	
+	
 	@IBAction func talkButtonTouchStarted(_ sender: Any) {
 		print("Start recording...")
-//		startRecording()
-		SpeakerIdClient.shared.getVerificationPhrases {
-			
-		}
+		startRecording()
     }
 	
 	@IBAction func talkButtonTouchEnded(_ sender: Any) {
@@ -52,7 +68,11 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	@IBOutlet weak var speakerTypeSegmentedControl: UISegmentedControl!
 	
 	@IBAction func speakerTypeSegmentedControlChanged(_ sender: Any) {
-		SpeakerIdClient.shared.setSelectedProfileType(typeInt: speakerTypeSegmentedControl.selectedSegmentIndex)
+		SpeakerIdClient.shared.setSelectedProfileType(typeInt: speakerTypeSegmentedControl.selectedSegmentIndex) {
+			DispatchQueue.main.async {
+				self.updateUIforSelectedProfile()
+			}
+		}
 	}
 	
 	@IBAction func unwind(segue:UIStoryboardSegue) { }
@@ -68,6 +88,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		talkButton.isEnabled = false
 		
 		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
+		
 		speakerTypeSegmentedControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType)
 		
 		SpeakerIdClient.shared.getConfig {
@@ -80,12 +101,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 				
 				self.recordingSession?.requestRecordPermission() { [unowned self] allowed in
 					DispatchQueue.main.async {
-						if allowed {
-							self.playButton.isEnabled = true
-							self.talkButton.isEnabled = true
-						} else {
-							print("Permission request faliled")
-						}
+						self.updateUIforSelectedProfile(recordingAllowed: allowed)
 					}
 				}
 			} catch let error as NSError {
@@ -93,7 +109,38 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 			}
 		}
     }
-
+	
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		updateUIforSelectedProfile()
+	}
+	
+	
+	func updateUIforSelectedProfile(recordingAllowed: Bool? = nil) {
+		
+		let allowed = recordingAllowed ?? (recordingSession?.recordPermission() == .granted) ?? false
+		
+		playButton.isEnabled = allowed
+		talkButton.isEnabled = allowed
+		
+		let title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
+		talkButton.setTitle(title, for: .normal)
+		
+		navigationItem.rightBarButtonItem?.title = SpeakerIdClient.shared.selectedProfile?.name ?? "..."
+		
+		profileTitleLabel.text = SpeakerIdClient.shared.selectedProfile?.name
+		profileIdLabel.text = SpeakerIdClient.shared.selectedProfile?.profileId
+		profileStatusLabel.text = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus?.rawValue
+		profileCreatedLabel.text = SpeakerIdClient.shared.selectedProfile?.createdDateTimeString(dateFormatter: dateFormatter)
+		profileUpdatedLabel.text = SpeakerIdClient.shared.selectedProfile?.lastActionDateTimeString(dateFormatter: dateFormatter)
+		profileTimeCountLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCount
+		profileRemainingLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCountRemaining
+		
+		if !allowed { print("Permission request faliled") }
+	}
+	
 	
 	func startRecording() {
 		
@@ -156,8 +203,31 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		if !flag {
 			finishRecording(success: false)
 		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
-			SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
-				print("Success!")
+			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
+				switch SpeakerIdClient.shared.selectedProfileType {
+				case .identification:
+					SpeakerIdClient.shared.identifySpeaker(fileUrl: recorder.url, callback: { (result, profile) in
+						DispatchQueue.main.async {
+							let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
+							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: nil))
+							self.present(alert, animated: true, completion: nil)
+						}
+					})
+				case .verification:
+					SpeakerIdClient.shared.verifySpeaker(fileUrl: recorder.url, callback: { result in
+						DispatchQueue.main.async {
+							let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
+							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: nil))
+							self.present(alert, animated: true, completion: nil)
+						}
+					})
+				}
+			} else {
+				SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
+					DispatchQueue.main.async {
+						self.updateUIforSelectedProfile()
+					}
+				}
 			}
 		}
 	}

@@ -42,12 +42,20 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 	var enrollmentSpeechTime: Double? // 0.0
 	var remainingEnrollmentSpeechTime: Double? // 0.0,
 	
-	init(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
+	override var timeCount: String? {
+		return "\(enrollmentSpeechTime ?? 0)"
+	}
+	
+	override var timeCountRemaining: String? {
+		return "\(remainingEnrollmentSpeechTime ?? 0)"
+	}
+	
+	init(fromJson dict: [String:Any], name: String?, isoFormatter: ISO8601DateFormatter?) {
 		super.init()
 		if let profileId = dict[SpeakerIdentificationProfile.profileIdKey] as? String {
 			self.profileId = profileId
 		}
-		self.update(fromJson: dict, isoFormatter: isoFormatter)
+		self.update(fromJson: dict, profileName: name ?? "unknown", isoFormatter: isoFormatter)
 	}
 	
 	override func reset() {
@@ -57,8 +65,8 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 		self.remainingEnrollmentSpeechTime = 20
 	}
 	
-	override func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
-		super.update(fromJson: dict, isoFormatter: isoFormatter)
+	override func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {
+		super.update(fromJson: dict, profileName: name, isoFormatter: isoFormatter)
 		
 		if let enrollmentSpeechTime = dict[enrollmentSpeechTimeKey] as? Double {
 			self.enrollmentSpeechTime = enrollmentSpeechTime
@@ -74,17 +82,26 @@ class SpeakerVerificationProfile: SpeakerProfile {
 	static let profileIdKey = "verificationProfileId"
 	
 	private let enrollmentsCountKey = "enrollmentsCount"
+	private let remainingEnrollmentsKey = "remainingEnrollments"
 	private let remainingEnrollmentsCountKey = "remainingEnrollmentsCount"
 	
 	var enrollmentsCount: Double? // 0.0
 	var remainingEnrollmentsCount: Double? // 0.0,
 	
-	init(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
+	override var timeCount: String? {
+		return "\(enrollmentsCount ?? 0)"
+	}
+	
+	override var timeCountRemaining: String? {
+		return "\(remainingEnrollmentsCount ?? 0)"
+	}
+	
+	init(fromJson dict: [String:Any], name: String?, isoFormatter: ISO8601DateFormatter?) {
 		super.init()
 		if let profileId = dict[SpeakerVerificationProfile.profileIdKey] as? String {
 			self.profileId = profileId
 		}
-		self.update(fromJson: dict, isoFormatter: isoFormatter)
+		self.update(fromJson: dict, profileName: name ?? "unknown", isoFormatter: isoFormatter)
 	}
 	
 	override func reset() {
@@ -94,13 +111,13 @@ class SpeakerVerificationProfile: SpeakerProfile {
 		self.remainingEnrollmentsCount = 20
 	}
 	
-	override func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
-		super.update(fromJson: dict, isoFormatter: isoFormatter)
+	override func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {
+		super.update(fromJson: dict, profileName: name, isoFormatter: isoFormatter)
 		
 		if let enrollmentsCount = dict[enrollmentsCountKey] as? Double {
 			self.enrollmentsCount = enrollmentsCount
 		}
-		if let remainingEnrollmentsCount = dict[remainingEnrollmentsCountKey] as? Double {
+		if let remainingEnrollmentsCount = dict[remainingEnrollmentsCountKey] as? Double ?? dict[remainingEnrollmentsKey] as? Double {
 			self.remainingEnrollmentsCount = remainingEnrollmentsCount
 		}
 	}
@@ -113,11 +130,20 @@ class SpeakerProfile {
 	private let lastActionDateTimeKey = "lastActionDateTime"
 	private let enrollmentStatusKey = "enrollmentStatus"
 	
+	var name: String!
 	var profileId: String! // "111f427c-3791-468f-b709-fcef7660fff9",
 	var locale: String? = "en-US"
 	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
 	var lastActionDateTime: Date? // "2015-04-23T18:25:43.511Z",
 	var enrollmentStatus: SpeakerProfileEnrollmentStatus? // "Enrolled"
+	
+	var timeCount: String? {
+		return ""
+	}
+	
+	var timeCountRemaining: String? {
+		return ""
+	}
 	
 	func createdDateTimeString(dateFormatter: DateFormatter?) -> String {
 		if let createdDateTime = createdDateTime {
@@ -137,8 +163,10 @@ class SpeakerProfile {
 		self.enrollmentStatus = .enrolling
 	}
 	
-	func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
-		
+	func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {
+		if let name = name {
+			self.name = name
+		}
 		if let locale = dict[localeKey] as? String{
 			self.locale = locale
 		}

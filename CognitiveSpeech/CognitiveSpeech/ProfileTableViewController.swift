@@ -40,10 +40,28 @@ class ProfileTableViewController: UITableViewController {
 	}
 	
 	@IBAction func addButtonTouched(_ sender: Any) {
-		SpeakerIdClient.shared.createProfile {
-			DispatchQueue.main.async {
-				self.tableView.reloadData()
+		
+		
+		let alert = UIAlertController(title: "Create Profile", message: "Enter the profile owner's name", preferredStyle: .alert)
+		
+		alert.addTextField { textField in
+			textField.placeholder = "Name"
+		}
+		
+		alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+		
+		alert.addAction(UIAlertAction(title: "Create", style: .default, handler: { action in
+			if let text = alert.textFields?.first?.text {
+				SpeakerIdClient.shared.createProfile(profileName: text) {
+					DispatchQueue.main.async {
+						self.tableView.reloadData()
+					}
+				}
 			}
+		}))
+		
+		present(alert, animated: true) {
+			
 		}
 	}
 	
@@ -69,8 +87,11 @@ class ProfileTableViewController: UITableViewController {
 
 		let profile = SpeakerIdClient.shared.profiles[indexPath.row]
 		
-		cell.textLabel?.text = profile.profileId
+		cell.textLabel?.text = profile.name
 		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString(dateFormatter: dateFormatter))"
+		
+		cell.isSelected = SpeakerIdClient.shared.isSelectedProfile(profile.profileId)
+		cell.accessoryType = cell.isSelected ? .checkmark : .none
 		
         return cell
     }
@@ -99,6 +120,7 @@ class ProfileTableViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		SpeakerIdClient.shared.selectProfile(byIndex: indexPath.row)
+		tableView.reloadData()
 	}
 
     /*
