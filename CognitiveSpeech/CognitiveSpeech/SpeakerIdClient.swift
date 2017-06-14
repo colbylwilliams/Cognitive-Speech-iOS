@@ -48,12 +48,24 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
+	var verificationPhrases: [String] = []
+	
+	
 	var profiles: [SpeakerProfile] {
 		switch selectedProfileType {
 		case .identification:
 			return identificationProfiles
 		case .verification:
 			return verificationProfiles
+		}
+	}
+	
+	private var selectedProfileId: String? {
+		switch selectedProfileType {
+		case .identification:
+			return selectedIdentificationProfileId
+		case .verification:
+			return selectedVerificationProfileId
 		}
 	}
 	
@@ -138,6 +150,23 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
+	var sentEmptyRequest: Bool {
+		switch selectedProfileType {
+		case .identification:
+			let sent = sentIdentificationEmptyRequest
+			sentIdentificationEmptyRequest = true
+			return sent
+		case .verification:
+			let sent = sentVerificationEmptyRequest
+			sentVerificationEmptyRequest = true
+			return sent
+		}
+	}
+	var sentIdentificationEmptyRequest = false
+	var sentVerificationEmptyRequest = false
+	
+	
+	
 	func profileFrom(dict: [String:Any]) {
 		switch selectedProfileType {
 		case .identification:
@@ -174,6 +203,33 @@ class SpeakerIdClient : NSObject {
 				let profile = SpeakerVerificationProfile(fromJson: dict, isoFormatter: isoFormatter)
 				verificationProfiles.append(profile)
 			}
+		}
+	}
+	
+	
+	// MARK - Get Initial Config
+	
+	func getConfig(callback: @escaping () -> ()) {
+		
+		var getAllProfilesCallback = false
+		var getVerificationPhrasesCallback = false
+		
+		func checkCallbacks() {
+			print("checkCallbacks - getAllProfilesCallback: \(getAllProfilesCallback)  getVerificationPhrasesCallback: \(getVerificationPhrasesCallback)")
+			if getAllProfilesCallback && getVerificationPhrasesCallback {
+				print("checkCallbacks - firing callback")
+				callback()
+			}
+		}
+		
+		getAllProfiles {
+			print("getAllProfiles finished")
+			getAllProfilesCallback = true
+			checkCallbacks()
+		}
+		getVerificationPhrases {
+			getVerificationPhrasesCallback = true
+			checkCallbacks()
 		}
 	}
 	
@@ -224,22 +280,6 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
-	var sentEmptyRequest: Bool {
-		switch selectedProfileType {
-		case .identification:
-			let sent = sentIdentificationEmptyRequest
-			sentIdentificationEmptyRequest = true
-			return sent
-		case .verification:
-			let sent = sentVerificationEmptyRequest
-			sentVerificationEmptyRequest = true
-			return sent
-		}
-	}
-	var sentIdentificationEmptyRequest = false
-	var sentVerificationEmptyRequest = false
-	
-	
 	// MARK - Get All Profiles
 	
 	func getAllProfiles(callback: @escaping () -> ()) {
@@ -264,6 +304,99 @@ class SpeakerIdClient : NSObject {
 		}
 	}
 	
+	
+	// MARK - Delete Profile
+	
+	func deleteProfile(profileId: String, callback: @escaping () -> ()) {
+		print("Delete \(selectedProfileType.string) Profile (\(profileId))...")
+		
+		if let url = selectedProfileType.url.url(withId: profileId) {
+			
+			let request = createRequest(url: url, method: "DELETE")
+			
+			toggleNetworkActivityIndicatorVisible(true)
+			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+				self.toggleNetworkActivityIndicatorVisible(false)
+				if let error = error {
+					print(error.localizedDescription)
+				}
+				switch self.selectedProfileType {
+				case .identification:
+					if let index = self.identificationProfiles.index(where: { $0.profileId == profileId }) {
+						self.identificationProfiles.remove(at: index)
+					}
+				case .verification:
+					if let index = self.verificationProfiles.index(where: { $0.profileId == profileId }) {
+						self.verificationProfiles.remove(at: index)
+					}
+				}
+				callback()
+			}).resume()
+		}
+	}
+	
+	
+	// MARK - Reset Enrollment
+	
+	func resetProfileEnrollment(profileId: String? = nil, callback: @escaping () -> ()) {
+		
+		if let profileId = profileId ?? selectedProfileId {
+		
+			print("Reset \(selectedProfileType.string) Profile (\(profileId))...")
+		
+			if let url = selectedProfileType.url.resetUrl(profileId) {
+				
+				let request = createRequest(url: url, method: "POST")
+				
+				toggleNetworkActivityIndicatorVisible(true)
+				URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+					self.toggleNetworkActivityIndicatorVisible(false)
+					if let error = error {
+						print(error.localizedDescription)
+					}
+					if let profile = self.profiles.first(where: { $0.profileId == profileId }) {
+						profile.reset()
+					}
+					callback()
+				}).resume()
+			}
+		}
+	}
+	
+	
+	// MARK - Get Verification Phrases
+	
+	func getVerificationPhrases(callback: @escaping () -> ()) {
+		print("Get Verification Phrases...")
+		
+		if verificationPhrases.count > 0 {
+			print("   returning locally cached phrases")
+			callback()
+			
+		} else if let url = SpeakerIdUrl.verificationPhrases.url(withLocale: "en-us") {
+			
+			let request = createRequest(url: url)
+			
+			toggleNetworkActivityIndicatorVisible(true)
+			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+				self.toggleNetworkActivityIndicatorVisible(false)
+				if let error = error {
+					print(error.localizedDescription)
+				}
+				if let data = data, let phraseList = try? JSONSerialization.jsonObject(with: data) as? [[String:String]] {
+					if let phraseList = phraseList {
+						for phraseObj in phraseList {
+							if let phrase = phraseObj["phrase"] {
+								print("   adding phrase: \(phrase)")
+								self.verificationPhrases.append(phrase)
+							}
+						}
+					}
+				}
+				callback()
+			}).resume()
+		}
+	}
 	
 	
 	// MARK - Requests
@@ -304,67 +437,14 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
-	// MARK - Delete Profile
 	
-	func deleteProfile(profileId: String, callback: @escaping () -> ()) {
-		print("Delete \(selectedProfileType.string) Profile (\(profileId))...")
-		
-		if let url = selectedProfileType.url.url(withId: profileId) {
-			
-			let request = createRequest(url: url, method: "DELETE")
-			
-			toggleNetworkActivityIndicatorVisible(true)
-			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-				self.toggleNetworkActivityIndicatorVisible(false)
-				if let error = error {
-					print(error.localizedDescription)
-				}
-				switch self.selectedProfileType {
-				case .identification:
-					if let index = self.identificationProfiles.index(where: { $0.profileId == profileId }) {
-						self.identificationProfiles.remove(at: index)
-					}
-				case .verification:
-					if let index = self.verificationProfiles.index(where: { $0.profileId == profileId }) {
-						self.verificationProfiles.remove(at: index)
-					}
-				}
-				callback()
-			}).resume()
-		}
-	}
-	
-	
-	
-	
-	func resetIdentificationProfile(profileId: String, callback: @escaping () -> ()) {
-		print("Reset Identification Profile (\(profileId))...")
-		
-		if let url = SpeakerIdUrl.identificationProfiles.resetUrl(profileId) {
-			
-			let request = createRequest(url: url, method: "POST")
-			
-			toggleNetworkActivityIndicatorVisible(true)
-			URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-				self.toggleNetworkActivityIndicatorVisible(false)
-				if let error = error {
-					print(error.localizedDescription)
-				}
-				if let profile = self.identificationProfiles.first(where: { $0.profileId == profileId }) {
-					profile.enrollmentSpeechTime = 0.0
-					profile.enrollmentStatus = SpeakerProfileEnrollmentStatus.enrolling
-				}
-				callback()
-			}).resume()
-		}
-	}
-	
+	// MARK - Profile Enrollment
 	
 	var timer: Timer!
 	
-	func createIdentificationProfileEnrollment(fileUrl: URL, callback: @escaping () -> ()) {
-		if let profileId = selectedIdentificationProfileId, let url = SpeakerIdUrl.identificationProfiles.enrollUrl(profileId, useShort: shortAudio) {
-			print("Create Identification Profile Enrollment (\(profileId))...")
+	func createProfileEnrollment(fileUrl: URL, callback: @escaping () -> ()) {
+		if let profileId = selectedProfileId, let url = selectedProfileType.url.enrollUrl(profileId, useShort: shortAudio) {
+			print("Create \(selectedProfileType.string) Profile Enrollment (\(profileId))...")
 			
 //			let request = createRequest(url: url, method: "POST", contentType: SpeakerIdHeaders.contentTypeValue)
 			let request = createRequest(url: url, method: "POST")
@@ -375,33 +455,39 @@ class SpeakerIdClient : NSObject {
 				if error != nil {
 					print(error!.localizedDescription)
 				}
-				if let httpResponse = response as? HTTPURLResponse, let operationLocation = httpResponse.allHeaderFields["Operation-Location"] as? String, let operationUrl = URL(string: operationLocation) {
+				switch self.selectedProfileType {
+				case .identification:
 					
-					print("Setting up Timer...")
-					
-					self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
-						self.checkOperationStatus(operationUrl: operationUrl, callback: { r in
-							
-							print("Finished!")
+					if let httpResponse = response as? HTTPURLResponse, let operationLocation = httpResponse.allHeaderFields["Operation-Location"] as? String, let operationUrl = URL(string: operationLocation) {
+						
+						print("Setting up Timer...")
+						self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
+							self.checkOperationStatus(operationUrl: operationUrl, callback: { r in
+								print("Finished!")
+								callback()
+							})
 						})
-					})
+						
+						RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
+					} else { self.checkForError(inData: data) }
 					
-					RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
-				} else { self.checkForError(inData: data) }
+				case .verification:
+					
+					if let data = data, let result = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
+						if let result = result {
+							let verificationResult = SpeakerVerificationEnrollmentResult(fromJson: result)
+							print(verificationResult)
+							callback()
+						}
+					} else { self.checkForError(inData: data) }
+				}
+				
 			}).resume()
 		}
 	}
 	
-	func checkForError(inData: Data?) {
-		if let data = inData, let json = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
-			if let json = json, let error = json["error"] as? [String:Any], let code = error["code"] as? String, let message = error["message"] as? String {
-				print("Error: \(code) - \(message)")
-			} else if let str = String.init(data: data, encoding: String.Encoding.utf8) {
-				print("Error: \(str)")
-			}
-		}
-	}
 	
+	// MARK - Identify Speaker
 	
 	func identifySpeaker(fileUrl: URL, callback: @escaping (SpeakerProfile?) -> ()) {
 		print("Identifying Speaker...")
@@ -438,6 +524,35 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
+	// MARK - Verify Speaker
+	
+	func verifySpeaker(fileUrl: URL, callback: @escaping (SpeakerVerificationResult?) -> ()) {
+		print("Verifying Speaker...")
+		
+		if let profileId = selectedProfileId, let url = SpeakerIdUrl.verify.verifyUrl(profileId: profileId) {
+			
+			let request = createRequest(url: url, method: "POST")
+			
+			toggleNetworkActivityIndicatorVisible(true)
+			URLSession.shared.uploadTask(with: request, fromFile: fileUrl, completionHandler: { (data, response, error) in
+				self.toggleNetworkActivityIndicatorVisible(false)
+				if error != nil {
+					print(error!.localizedDescription)
+				}
+				if let data = data, let result = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
+					if let result = result {
+						let verificationResult = SpeakerVerificationResult(fromJson: result)
+						print(verificationResult)
+						callback(verificationResult)
+					}
+				} else { self.checkForError(inData: data) }
+			}).resume()
+		}
+	}
+	
+	
+	// MARK - Check Operation Status
+	
 	func checkOperationStatus(operationUrl: URL, callback: @escaping (SpeakerOperationResult) -> ()) {
 		print("Checking operation status...")
 		
@@ -463,6 +578,21 @@ class SpeakerIdClient : NSObject {
 			}  else { self.checkForError(inData: opData) }
 		}).resume()
 	}
+	
+	
+	// MARK - Error Handling
+	
+	func checkForError(inData: Data?) {
+		if let data = inData, let json = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
+			if let json = json, let error = json["error"] as? [String:Any], let code = error["code"] as? String, let message = error["message"] as? String {
+				print("Error: \(code) - \(message)")
+			} else if let str = String.init(data: data, encoding: String.Encoding.utf8) {
+				print("Error: \(str)")
+			}
+		}
+	}
+	
+	
 	
 	
 	func createRequest(url: URL, method: String = "GET", contentType: String = "") -> URLRequest {

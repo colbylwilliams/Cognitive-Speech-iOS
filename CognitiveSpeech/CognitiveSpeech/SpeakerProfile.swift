@@ -50,6 +50,13 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 		self.update(fromJson: dict, isoFormatter: isoFormatter)
 	}
 	
+	override func reset() {
+		print("Reset")
+		super.reset()
+		self.enrollmentSpeechTime = 0.0
+		self.remainingEnrollmentSpeechTime = 20
+	}
+	
 	override func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
 		super.update(fromJson: dict, isoFormatter: isoFormatter)
 		
@@ -78,6 +85,13 @@ class SpeakerVerificationProfile: SpeakerProfile {
 			self.profileId = profileId
 		}
 		self.update(fromJson: dict, isoFormatter: isoFormatter)
+	}
+	
+	override func reset() {
+		print("Reset")
+		super.reset()
+		self.enrollmentsCount = 0.0
+		self.remainingEnrollmentsCount = 20
 	}
 	
 	override func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
@@ -117,6 +131,10 @@ class SpeakerProfile {
 			return dateFormatter?.string(from: lastActionDateTime) ?? ""
 		}
 		return ""
+	}
+	
+	func reset() {
+		self.enrollmentStatus = .enrolling
 	}
 	
 	func update(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {

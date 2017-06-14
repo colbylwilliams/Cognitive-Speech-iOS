@@ -21,7 +21,10 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	
 	@IBAction func talkButtonTouchStarted(_ sender: Any) {
 		print("Start recording...")
-		startRecording()
+//		startRecording()
+		SpeakerIdClient.shared.getVerificationPhrases {
+			
+		}
     }
 	
 	@IBAction func talkButtonTouchEnded(_ sender: Any) {
@@ -67,7 +70,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
 		speakerTypeSegmentedControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType)
 		
-		SpeakerIdClient.shared.getAllProfiles {
+		SpeakerIdClient.shared.getConfig {
 			
 			self.recordingSession = AVAudioSession.sharedInstance()
 			
@@ -105,7 +108,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		]
 		
 		do {
-			
 			audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
 			audioRecorder?.delegate = self
 			audioRecorder?.record()
@@ -135,7 +137,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		if let recorder = audioRecorder, !recorder.isRecording {
 			
 			do {
-				
 				try audioPlayer = AVAudioPlayer(contentsOf:recorder.url)
 				audioPlayer?.delegate = self
 				audioPlayer?.prepareToPlay()
@@ -147,6 +148,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		}
 	}
 	
+	
 	// MARK: - AVAudioRecorderDelegate
 	
 	func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
@@ -154,7 +156,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		if !flag {
 			finishRecording(success: false)
 		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
-			SpeakerIdClient.shared.createIdentificationProfileEnrollment(fileUrl: recorder.url) {
+			SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
 				print("Success!")
 			}
 		}

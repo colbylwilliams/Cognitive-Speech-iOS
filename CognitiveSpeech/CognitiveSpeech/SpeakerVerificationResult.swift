@@ -13,12 +13,12 @@ class SpeakerVerificationResult {
 	let convenienceKey = "confidence"
 	let phraseKey = "phrase"
 	
-	var result: String? // "Accept", // [Accept | Reject]
+	var result: SpeakerVerificaitonResultResult? // "Accept", // [Accept | Reject]
 	var confidence: SpeakerResultConfidence? // "Normal", // [Low | Normal | High]
 	var phrase: String?  //"recognized phrase"
 	
 	init(fromJson dict: [String:Any]) {
-		if let result = dict[resultKey] as? String {
+		if let resultString = dict[resultKey] as? String, let result = SpeakerVerificaitonResultResult(rawValue: resultString) {
 			self.result = result
 		}
 		if let confidenceString = dict[convenienceKey] as? String, let confidence = SpeakerResultConfidence(rawValue: confidenceString) {
@@ -29,6 +29,13 @@ class SpeakerVerificationResult {
 		}
 	}
 }
+
+
+enum SpeakerVerificaitonResultResult : String {
+	case accept = "Accept"
+	case reject = "Reject"
+}
+
 
 enum SpeakerResultConfidence : String {
 	case low = "Low"

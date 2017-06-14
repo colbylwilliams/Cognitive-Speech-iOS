@@ -23,6 +23,11 @@ enum SpeakerIdUrl : String {
 		return URL(string: self.path)
 	}
 	
+	func url(withLocale locale: String) -> URL? {
+		let string = "\(self.path)?locale=\(locale)"
+		return URL(string: string)
+	}
+	
 	func verifyUrl(profileId: String) -> URL? {
 		let string = "\(self.path)?verificationProfileId=\(profileId)"
 		return URL(string: string)
@@ -50,7 +55,7 @@ enum SpeakerIdUrl : String {
 	func enrollUrl (_ profileId: String, useShort: Bool = false) -> URL? {
 		var string = self.enrollPath(profileId)
 		
-		if useShort { string += "?shortAudio=true" }
+		if useShort && self == .identificationProfiles { string += "?shortAudio=true" }
 		
 		return URL(string: string)
 	}
