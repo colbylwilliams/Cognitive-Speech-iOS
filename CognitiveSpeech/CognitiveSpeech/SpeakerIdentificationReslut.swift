@@ -9,6 +9,7 @@
 import Foundation
 
 class SpeakerIdentificationReslut {
+	
 	let identifiedProfileIdKey = "identifiedProfileId"
 	let convenienceKey = "confidence"
 	

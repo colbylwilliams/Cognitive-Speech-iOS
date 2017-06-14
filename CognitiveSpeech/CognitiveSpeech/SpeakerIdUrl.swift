@@ -28,7 +28,7 @@ enum SpeakerIdUrl : String {
 		return URL(string: string)
 	}
 	
-	func identifyUrl(useShort: Bool = false, profileIds: String...) -> URL? {
+	func identifyUrl(useShort: Bool = false, profileIds: [String]) -> URL? {
 		guard profileIds.count > 0 else {
 			print("Must provide one or more profileIds")
 			return nil

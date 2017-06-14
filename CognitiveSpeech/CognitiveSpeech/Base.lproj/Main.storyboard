@@ -25,7 +25,7 @@
             </objects>
             <point key="canvasLocation" x="132" y="781"/>
         </scene>
-        <!--Speaker Recognition API-->
+        <!--Start View Controller-->
         <scene sceneID="Ket-v0-WUW">
             <objects>
                 <viewController storyboardIdentifier="StartViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Tuf-Kh-Nc4" customClass="StartViewController" customModule="CognitiveSpeech" customModuleProvider="target" sceneMemberID="viewController">
@@ -89,7 +89,24 @@
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="height" secondItem="1NG-U3-hdZ" secondAttribute="height" id="z7S-7s-gCQ"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Speaker Recognition API" id="RDL-0E-HpR">
+                    <navigationItem key="navigationItem" id="RDL-0E-HpR">
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" title="short" id="Jf5-ZA-qH4">
+                            <connections>
+                                <action selector="shortAudioButtonTouched:" destination="Tuf-Kh-Nc4" id="P4b-PI-kyP"/>
+                            </connections>
+                        </barButtonItem>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="b0A-6m-WuB">
+                            <rect key="frame" x="127" y="7" width="121" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Identify"/>
+                                <segment title="Verify"/>
+                            </segments>
+                            <connections>
+                                <action selector="speakerTypeSegmentedControlChanged:" destination="Tuf-Kh-Nc4" eventType="valueChanged" id="OoX-cz-kft"/>
+                            </connections>
+                        </segmentedControl>
                         <barButtonItem key="rightBarButtonItem" systemItem="organize" id="wAT-qR-ZY0">
                             <connections>
                                 <segue destination="esX-fj-ElE" kind="presentation" id="m1n-FK-Y1S"/>
@@ -98,6 +115,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="playButton" destination="1NG-U3-hdZ" id="SuP-tS-R85"/>
+                        <outlet property="shortAudioButton" destination="Jf5-ZA-qH4" id="WFT-BU-Fsf"/>
+                        <outlet property="speakerTypeSegmentedControl" destination="b0A-6m-WuB" id="Tko-7t-hf2"/>
                         <outlet property="talkButton" destination="hCn-hk-WI2" id="k29-7F-wac"/>
                     </connections>
                 </viewController>
@@ -119,7 +138,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YCL-J6-pr7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="132" y="12"/>
+            <point key="canvasLocation" x="1084" y="7"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="VeB-Qb-kLs">
@@ -173,6 +192,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="dmX-gJ-H9R">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <connections>
                             <action selector="refreshValueChanged:" destination="m4E-z4-S97" eventType="valueChanged" id="Inx-jN-CwJ"/>
@@ -185,7 +205,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hI2-z3-TSv" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="8nX-Yv-Lle" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1084" y="11"/>
+            <point key="canvasLocation" x="2036" y="6"/>
         </scene>
     </scenes>
 </document>

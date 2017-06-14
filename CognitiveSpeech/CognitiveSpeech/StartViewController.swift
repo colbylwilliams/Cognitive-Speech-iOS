@@ -17,6 +17,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	
 	@IBOutlet weak var talkButton: UIButton!
 	@IBOutlet weak var playButton: UIButton!
+	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
 	
 	@IBAction func talkButtonTouchStarted(_ sender: Any) {
 		print("Start recording...")
@@ -34,11 +35,21 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	}
 	
 	@IBAction func createIdProfileTouched(_ sender: Any) {
-		SpeakerIdClient.shared.printProfiles()
-		SpeakerIdClient.shared.refreshAllIdentificationProfiles() {
+		SpeakerIdClient.shared.refreshAllProfiles() {
 //		SpeakerIdClient.shared.getAllIdentificationProfiles() { profiles in
-			SpeakerIdClient.shared.printProfiles()
+			
 		}
+	}
+	
+	@IBAction func shortAudioButtonTouched(_ sender: Any) {
+		SpeakerIdClient.shared.shortAudio = !SpeakerIdClient.shared.shortAudio
+		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
+	}
+	
+	@IBOutlet weak var speakerTypeSegmentedControl: UISegmentedControl!
+	
+	@IBAction func speakerTypeSegmentedControlChanged(_ sender: Any) {
+		SpeakerIdClient.shared.setSelectedProfileType(typeInt: speakerTypeSegmentedControl.selectedSegmentIndex)
 	}
 	
 	@IBAction func unwind(segue:UIStoryboardSegue) { }
@@ -53,7 +64,10 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		playButton.isEnabled = false
 		talkButton.isEnabled = false
 		
-		SpeakerIdClient.shared.getAllIdentificationProfiles {
+		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
+		speakerTypeSegmentedControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType)
+		
+		SpeakerIdClient.shared.getAllProfiles {
 			
 			self.recordingSession = AVAudioSession.sharedInstance()
 			
@@ -139,8 +153,8 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		print("Audio Recorder finished recording: successful: \(flag)")
 		if !flag {
 			finishRecording(success: false)
-		} else if let profileId = SpeakerIdClient.shared.speakerProfiles.selected?.identificationProfileId {
-			SpeakerIdClient.shared.createIdentificationProfileEnrollment(profileId: profileId, fileUrl: recorder.url) {
+		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
+			SpeakerIdClient.shared.createIdentificationProfileEnrollment(fileUrl: recorder.url) {
 				print("Success!")
 			}
 		}

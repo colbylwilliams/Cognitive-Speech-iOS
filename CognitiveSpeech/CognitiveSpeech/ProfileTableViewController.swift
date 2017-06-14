@@ -9,16 +9,28 @@
 import UIKit
 
 class ProfileTableViewController: UITableViewController {
-
+	
+	private	var _dateFormatter: DateFormatter?
+	var dateFormatter: DateFormatter? {
+		if _dateFormatter == nil {
+			_dateFormatter = DateFormatter()
+			_dateFormatter?.dateStyle = .short
+			_dateFormatter?.timeStyle = .short
+		}
+		return _dateFormatter!
+	}
+	
 	@IBOutlet var addButton: UIBarButtonItem!
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
+		
+		title = "\(SpeakerIdClient.shared.selectedProfileType.string) Profiles"
     }
 
 	@IBAction func refreshValueChanged(_ sender: UIRefreshControl) {
 		if sender.isRefreshing {
-			SpeakerIdClient.shared.refreshAllIdentificationProfiles {
+			SpeakerIdClient.shared.refreshAllProfiles {
 				DispatchQueue.main.async {
 					sender.endRefreshing()
 					self.tableView.reloadData()
@@ -28,7 +40,7 @@ class ProfileTableViewController: UITableViewController {
 	}
 	
 	@IBAction func addButtonTouched(_ sender: Any) {
-		SpeakerIdClient.shared.createIdentificationProfile {
+		SpeakerIdClient.shared.createProfile {
 			DispatchQueue.main.async {
 				self.tableView.reloadData()
 			}
@@ -39,6 +51,7 @@ class ProfileTableViewController: UITableViewController {
 		super.setEditing(editing, animated: animated)
 		navigationItem.leftBarButtonItem?.isEnabled = !editing
 	}
+	
 	
 	// MARK: - Table view data source
 
@@ -56,8 +69,8 @@ class ProfileTableViewController: UITableViewController {
 
 		let profile = SpeakerIdClient.shared.profiles[indexPath.row]
 		
-		cell.textLabel?.text = profile.identificationProfileId		
-		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString)"
+		cell.textLabel?.text = profile.profileId
+		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString(dateFormatter: dateFormatter))"
 		
         return cell
     }
@@ -71,8 +84,8 @@ class ProfileTableViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-			if let profileId = SpeakerIdClient.shared.profiles[indexPath.row].identificationProfileId {
-				SpeakerIdClient.shared.deleteIdentificationProfile(profileId: profileId) {
+			if let profileId = SpeakerIdClient.shared.profiles[indexPath.row].profileId {
+				SpeakerIdClient.shared.deleteProfile(profileId: profileId) {
 					DispatchQueue.main.async {
 						tableView.deleteRows(at: [indexPath], with: .fade)
 					}
@@ -85,7 +98,7 @@ class ProfileTableViewController: UITableViewController {
 	
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		SpeakerIdClient.shared.speakerProfiles.setSelected(index: indexPath.row)
+		SpeakerIdClient.shared.selectProfile(byIndex: indexPath.row)
 	}
 
     /*

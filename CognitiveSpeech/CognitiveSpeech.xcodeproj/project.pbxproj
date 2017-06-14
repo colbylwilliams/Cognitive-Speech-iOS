@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B524EB671EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B524EB661EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift */; };
+		B536AF161EF163B1005BF50E /* SpeakerEnrollmentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B536AF151EF163B1005BF50E /* SpeakerEnrollmentResult.swift */; };
+		B536AF181EF17248005BF50E /* SpeakerPreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = B536AF171EF17248005BF50E /* SpeakerPreferenceKeys.swift */; };
 		B549BAFC1EEEE6BE002D3A23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B549BAFB1EEEE6BE002D3A23 /* AppDelegate.swift */; };
 		B549BB011EEEE6BE002D3A23 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B549BAFF1EEEE6BE002D3A23 /* Main.storyboard */; };
 		B549BB031EEEE6BE002D3A23 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B549BB021EEEE6BE002D3A23 /* Assets.xcassets */; };
@@ -24,6 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B524EB661EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerProfileEnrollmentStatus.swift; sourceTree = "<group>"; };
+		B536AF151EF163B1005BF50E /* SpeakerEnrollmentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerEnrollmentResult.swift; sourceTree = "<group>"; };
+		B536AF171EF17248005BF50E /* SpeakerPreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerPreferenceKeys.swift; sourceTree = "<group>"; };
 		B549BAF81EEEE6BE002D3A23 /* CognitiveSpeech.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CognitiveSpeech.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B549BAFB1EEEE6BE002D3A23 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B549BB001EEEE6BE002D3A23 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -87,6 +93,9 @@
 				B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */,
 				B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */,
 				B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */,
+				B524EB661EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift */,
+				B536AF151EF163B1005BF50E /* SpeakerEnrollmentResult.swift */,
+				B536AF171EF17248005BF50E /* SpeakerPreferenceKeys.swift */,
 			);
 			path = CognitiveSpeech;
 			sourceTree = "<group>";
@@ -169,10 +178,13 @@
 				B5F747401EF0105E00F94F87 /* SpeakerVerificationResult.swift in Sources */,
 				B55845781EEF1DD100DEC7B9 /* SpeakerIdHeader.swift in Sources */,
 				B55845721EEF04C300DEC7B9 /* SpeakerIdClient.swift in Sources */,
+				B524EB671EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift in Sources */,
 				B558457A1EEF242A00DEC7B9 /* SpeakerProfile.swift in Sources */,
 				B5F747421EF013E800F94F87 /* SpeakerOperationResult.swift in Sources */,
 				B558457C1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift in Sources */,
 				B549BB0E1EEEE71F002D3A23 /* StartViewController.swift in Sources */,
+				B536AF181EF17248005BF50E /* SpeakerPreferenceKeys.swift in Sources */,
+				B536AF161EF163B1005BF50E /* SpeakerEnrollmentResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

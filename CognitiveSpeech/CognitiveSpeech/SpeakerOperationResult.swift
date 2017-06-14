@@ -16,48 +16,30 @@ class SpeakerOperationResult {
 	let processingResultKey = "processingResult"
 	let messageKey = "message"
 	
-	private	var _dateFormatter: DateFormatter?
-	var dateFormatter: DateFormatter? {
-		if _dateFormatter == nil {
-			_dateFormatter = DateFormatter()
-			_dateFormatter?.dateStyle = .short
-			_dateFormatter?.timeStyle = .short
-		}
-		return _dateFormatter
-	}
-	
-	private	var _isoFormatter: ISO8601DateFormatter?
-	var isoFormatter: ISO8601DateFormatter? {
-		if _isoFormatter == nil {
-			_isoFormatter = ISO8601DateFormatter()
-			_isoFormatter?.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-		}
-		return _isoFormatter
-	}
 	
 	var status: SpeakerOperationResultStatus? // "running"
 	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
 	var lastActionDateTime: Date? // "2015-04-23T18:25:43.511Z",
-	var enrollmentResult: SpeakerProfile?
+	var enrollmentResult: SpeakerEnrollmentResult?
 	var identificationResult: SpeakerIdentificationReslut?
 	var message: String?
 	
-	var createdDateTimeString: String {
+	func createdDateTimeString(dateFormatter: DateFormatter?) -> String {
 		if let createdDateTime = createdDateTime {
 			return dateFormatter?.string(from: createdDateTime) ?? ""
 		}
 		return ""
 	}
 	
-	var lastActionDateTimeString: String {
+	func lastActionDateTimeString(dateFormatter: DateFormatter?) -> String {
 		if let lastActionDateTime = lastActionDateTime {
 			return dateFormatter?.string(from: lastActionDateTime) ?? ""
 		}
 		return ""
 	}
-
 	
-	init(fromJson dict: [String:Any]) {
+	
+	init(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
 		if let statusString = dict[statusKey] as? String, let status = SpeakerOperationResultStatus(rawValue: statusString) {
 			self.status = status
 		}
@@ -75,7 +57,7 @@ class SpeakerOperationResult {
 			if let _ = processingResult["processingResult"] {
 				self.identificationResult = SpeakerIdentificationReslut(fromJson: processingResult)
 			} else if let _ = processingResult["enrollmentStatus"] {
-				self.enrollmentResult = SpeakerProfile(fromJson: processingResult)
+				self.enrollmentResult = SpeakerEnrollmentResult(fromJson: processingResult)
 			}
 		}
 	}
