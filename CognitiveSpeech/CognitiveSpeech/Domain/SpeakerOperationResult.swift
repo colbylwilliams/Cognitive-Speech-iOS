@@ -54,7 +54,7 @@ class SpeakerOperationResult {
 		if let processingResult = dict[processingResultKey] as? [String:Any] {
 			self.processingResult = processingResult
 			// Check if this is a SpeakerProfile or SpeakerIdentificationReslut
-			if let _ = processingResult["processingResult"] {
+			if let _ = processingResult["identifiedProfileId"] {
 				self.identificationResult = SpeakerIdentificationReslut(fromJson: processingResult)
 			} else if let _ = processingResult["enrollmentStatus"] {
 				self.enrollmentResult = SpeakerEnrollmentResult(fromJson: processingResult)
