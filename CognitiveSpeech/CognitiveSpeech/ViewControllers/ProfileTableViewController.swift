@@ -131,6 +131,7 @@ class ProfileTableViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		selectIndexPath(tableView, indexPath: indexPath)
+		dismiss(animated: true, completion: nil)
 	}
 	
 	func selectIndexPath(_ tableView: UITableView, indexPath: IndexPath) {

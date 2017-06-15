@@ -21,8 +21,11 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	@IBOutlet var profileLabels: [UILabel]!
 	
+	@IBOutlet weak var auxButton: UIButton!
 	@IBOutlet weak var talkButton: UIButton!
 	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
+	
+	@IBOutlet weak var phraseContainerView: UIView!
 	
 	@IBOutlet weak var speakerTypeSegmentedControl: UISegmentedControl!
 	
@@ -43,9 +46,10 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		
         super.viewDidLoad()
 		
-		talkButton.layer.cornerRadius = 5
+		phraseContainerView.isHidden = true
 		
 		talkButton.isEnabled = false
+		talkButton.layer.cornerRadius = 5
 		talkButton.backgroundColor = UIColor.lightGray
 		
 		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
@@ -117,6 +121,17 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		profileUpdatedLabel.text = SpeakerIdClient.shared.selectedProfile?.lastActionDateTimeString(dateFormatter: dateFormatter)
 		profileTimeCountLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCount
 		profileRemainingLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCountRemaining
+		
+		switch SpeakerIdClient.shared.selectedProfileType {
+		case .identification:
+			phraseContainerView.isHidden = true
+		case .verification:
+			phraseContainerView.isHidden = false
+			if let phraseController = childViewControllers.first as? PhraseTableViewController {
+				phraseController.phrase = SpeakerIdClient.shared.selectedVerificationProfile?.phrase
+				phraseController.tableView.reloadData()
+			}
+		}
 		
 		print("Recording Permission = \(allowed)")
 	}

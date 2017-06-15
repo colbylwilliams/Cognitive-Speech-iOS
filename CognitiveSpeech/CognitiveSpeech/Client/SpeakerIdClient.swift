@@ -255,10 +255,20 @@ class SpeakerIdClient : NSObject {
 			if let profile = verificationProfiles.first(where: { $0.profileId == profileId }) {
 				print("   (\(profileId)) found existing profile with Id - updating existing profile")
 				profile.update(fromJson: dict, isoFormatter: isoFormatter)
+				if let phrase = profile.phrase {
+					UserDefaults.standard.set(phrase, forKey: SpeakerPreferenceKeys.phraseForProfileId(profileId: profileId))
+				} else {
+					profile.phrase = UserDefaults.standard.string(forKey: SpeakerPreferenceKeys.phraseForProfileId(profileId: profileId))
+				}
 				return profile
 			} else {
 				print("   (\(profileId)) did not find existing profile with Id - creating new profile")
 				let profile = SpeakerVerificationProfile(fromJson: dict, name: name, isoFormatter: isoFormatter)
+				if let phrase = profile.phrase {
+					UserDefaults.standard.set(phrase, forKey: SpeakerPreferenceKeys.phraseForProfileId(profileId: profileId))
+				} else {
+					profile.phrase = UserDefaults.standard.string(forKey: SpeakerPreferenceKeys.phraseForProfileId(profileId: profileId))
+				}
 				verificationProfiles.append(profile)
 				return profile
 			}

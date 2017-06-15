@@ -12,12 +12,14 @@ class SpeakerVerificationProfile: SpeakerProfile {
 	
 	static let profileIdKey = "verificationProfileId"
 	
+	private let phraseKey = "phrase"
 	private let enrollmentsCountKey = "enrollmentsCount"
 	private let remainingEnrollmentsKey = "remainingEnrollments"
 	private let remainingEnrollmentsCountKey = "remainingEnrollmentsCount"
 	
 	var enrollmentsCount: Double? // 0.0
 	var remainingEnrollmentsCount: Double? // 0.0,
+	var phrase: String?
 	
 	override var timeCount: String? {
 		return "\(enrollmentsCount ?? 0)"
@@ -38,8 +40,9 @@ class SpeakerVerificationProfile: SpeakerProfile {
 	override func reset() {
 		print("Reset")
 		super.reset()
-		self.enrollmentsCount = 0.0
-		self.remainingEnrollmentsCount = 20
+		self.phrase = nil
+		self.enrollmentsCount = 0
+		self.remainingEnrollmentsCount = 3
 	}
 	
 	override func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {
@@ -50,6 +53,9 @@ class SpeakerVerificationProfile: SpeakerProfile {
 		}
 		if let remainingEnrollmentsCount = dict[remainingEnrollmentsCountKey] as? Double ?? dict[remainingEnrollmentsKey] as? Double {
 			self.remainingEnrollmentsCount = remainingEnrollmentsCount
+		}
+		if let phrase = dict[phraseKey] as? String {
+			self.phrase = phrase
 		}
 	}
 }

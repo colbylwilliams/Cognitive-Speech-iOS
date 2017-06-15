@@ -87,7 +87,7 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		if !flag {
 			finishRecording(success: false)
 			dismiss(animated: true, completion: nil)
-		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
+		} else { 
 			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
 				switch SpeakerIdClient.shared.selectedProfileType {
 				case .identification:

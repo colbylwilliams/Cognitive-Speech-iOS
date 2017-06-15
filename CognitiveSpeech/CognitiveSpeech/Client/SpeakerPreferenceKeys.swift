@@ -16,4 +16,7 @@ struct SpeakerPreferenceKeys {
 	static func nameForProfileId (profileId: String) -> String {
 		return "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").nameForProfileId.\(profileId)"
 	}
+	static func phraseForProfileId (profileId: String) -> String {
+		return "\(Bundle.main.bundleIdentifier ?? "cognitive.speech").phraseForProfileId.\(profileId)"
+	}
 }

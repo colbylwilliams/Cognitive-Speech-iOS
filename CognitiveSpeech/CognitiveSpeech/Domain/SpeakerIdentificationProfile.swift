@@ -38,7 +38,7 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 		print("Reset")
 		super.reset()
 		self.enrollmentSpeechTime = 0.0
-		self.remainingEnrollmentSpeechTime = 20
+		self.remainingEnrollmentSpeechTime = 30.0
 	}
 	
 	override func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {
