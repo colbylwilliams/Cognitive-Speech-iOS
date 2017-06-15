@@ -53,7 +53,7 @@
                                     <constraint firstAttribute="height" constant="44" id="ryI-q0-aWA"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
-                                <state key="normal" title="Talk">
+                                <state key="normal" title="...">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -164,13 +164,22 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZSM-P5-K9M">
+                                <rect key="frame" x="172" y="574" width="30" height="30"/>
+                                <state key="normal" title="pip"/>
+                                <connections>
+                                    <segue destination="bni-hw-HL3" kind="presentation" id="ndN-of-vWR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="EDE-mr-iB5" firstAttribute="bottom" secondItem="hCn-hk-WI2" secondAttribute="bottom" constant="119" id="7G6-cB-wxe"/>
+                            <constraint firstItem="ZSM-P5-K9M" firstAttribute="top" secondItem="hCn-hk-WI2" secondAttribute="bottom" constant="26" id="Azp-9O-iYQ"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="centerX" secondItem="Vhp-xt-CBX" secondAttribute="centerX" id="FvK-5s-fFO"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="top" secondItem="EDE-mr-iB5" secondAttribute="top" constant="20" id="NLH-7g-9TV"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="top" secondItem="1NG-U3-hdZ" secondAttribute="bottom" constant="100" id="Rw3-RS-3mA"/>
+                            <constraint firstItem="ZSM-P5-K9M" firstAttribute="centerX" secondItem="Vhp-xt-CBX" secondAttribute="centerX" id="ZIF-xb-XTn"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="1NG-U3-hdZ" secondAttribute="leading" id="ejQ-sd-2dl"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="centerX" secondItem="EDE-mr-iB5" secondAttribute="centerX" id="jPy-NH-HCU"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="Vhp-xt-CBX" secondAttribute="leadingMargin" constant="20" id="n9x-gJ-re5"/>
@@ -221,6 +230,81 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tXB-lw-WMD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1084" y="780"/>
+        </scene>
+        <!--Pip View Controller-->
+        <scene sceneID="pgc-ZD-4pf">
+            <objects>
+                <viewController storyboardIdentifier="PipViewController" modalPresentationStyle="overCurrentContext" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bni-hw-HL3" customClass="PipViewController" customModule="CognitiveSpeech" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides/>
+                    <view key="view" contentMode="scaleToFill" id="4Cl-8a-ZtR">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZiK-JG-XQC">
+                                <rect key="frame" x="67" y="269" width="240" height="128"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="DQu-HQ-kOo">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="HO3-9s-Bmk">
+                                            <rect key="frame" x="52.5" y="54.5" width="20" height="20"/>
+                                            <color key="color" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </activityIndicatorView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n0M-0M-gvU">
+                                            <rect key="frame" x="78.5" y="54" width="97.5" height="21"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Touch anywhere to finish recording." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFf-Wo-7mg">
+                                            <rect key="frame" x="19" y="105.5" width="202.5" height="14.5"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottomMargin" secondItem="hFf-Wo-7mg" secondAttribute="bottom" id="7Ih-MG-2i9"/>
+                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="leading" secondItem="HO3-9s-Bmk" secondAttribute="trailing" constant="6" id="LW9-J8-QLQ"/>
+                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="centerY" secondItem="DQu-HQ-kOo" secondAttribute="centerY" id="MBg-9L-f3D"/>
+                                        <constraint firstItem="hFf-Wo-7mg" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" id="N2h-9w-Iy8"/>
+                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" constant="7" id="Wuo-88-n2l"/>
+                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="centerY" secondItem="HO3-9s-Bmk" secondAttribute="centerY" id="ye9-yv-z2m"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="3DE-bz-RWj"/>
+                                    <constraint firstAttribute="width" constant="240" id="q11-FH-BOA"/>
+                                </constraints>
+                                <blurEffect style="dark"/>
+                            </visualEffectView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="ZiK-JG-XQC" firstAttribute="centerY" secondItem="4Cl-8a-ZtR" secondAttribute="centerY" id="i8l-tI-Q3g"/>
+                            <constraint firstItem="ZiK-JG-XQC" firstAttribute="centerX" secondItem="4Cl-8a-ZtR" secondAttribute="centerX" id="tjt-Je-hSN"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="n4J-qy-cqI"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="4wf-l7-cVB" appends="YES" id="8ZH-Fe-Acw"/>
+                        </connections>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="HO3-9s-Bmk" id="Wa9-Eu-LYe"/>
+                        <outlet property="backgroundView" destination="ZiK-JG-XQC" id="VL3-gK-nKK"/>
+                        <outlet property="feedbackLabel" destination="n0M-0M-gvU" id="LMr-eb-Lh3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zP2-dO-fnI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="UJs-uz-cmK" userLabel="Exit" sceneMemberID="exit"/>
+                <tapGestureRecognizer id="4wf-l7-cVB">
+                    <connections>
+                        <segue destination="UJs-uz-cmK" kind="unwind" unwindAction="unwindWithSegue:" id="p5Z-EP-iUx"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1958" y="779"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="JZ0-yF-BS6">
@@ -278,14 +362,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Profiles" id="yG2-dA-At0">
-                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="cyI-mU-bMc">
-                            <connections>
-                                <segue destination="8nX-Yv-Lle" kind="unwind" identifier="unwind" unwindAction="unwindWithSegue:" id="s01-Pg-Tuw"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Aab-mw-05W">
+                        <barButtonItem key="leftBarButtonItem" systemItem="add" id="Aab-mw-05W">
                             <connections>
                                 <action selector="addButtonTouched:" destination="m4E-z4-S97" id="ZTW-XA-8zc"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="cyI-mU-bMc">
+                            <connections>
+                                <segue destination="8nX-Yv-Lle" kind="unwind" identifier="unwind" unwindAction="unwindWithSegue:" id="s01-Pg-Tuw"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

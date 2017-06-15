@@ -9,9 +9,10 @@
 import Foundation
 
 class SpeakerVerificationResult {
-	let resultKey = "result"
-	let convenienceKey = "confidence"
-	let phraseKey = "phrase"
+	
+	private let resultKey = "result"
+	private let convenienceKey = "confidence"
+	private let phraseKey = "phrase"
 	
 	var result: SpeakerVerificaitonResultResult? // "Accept", // [Accept | Reject]
 	var confidence: SpeakerResultConfidence? // "Normal", // [Low | Normal | High]
@@ -28,17 +29,4 @@ class SpeakerVerificationResult {
 			self.phrase = phrase
 		}
 	}
-}
-
-
-enum SpeakerVerificaitonResultResult : String {
-	case accept = "Accept"
-	case reject = "Reject"
-}
-
-
-enum SpeakerResultConfidence : String {
-	case low = "Low"
-	case normal = "Normal"
-	case high = "High"
 }

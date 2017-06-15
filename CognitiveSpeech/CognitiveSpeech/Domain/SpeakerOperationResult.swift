@@ -10,12 +10,11 @@ import Foundation
 
 class SpeakerOperationResult {
 	
-	let statusKey = "status"
-	let createdDateTimeKey = "createdDateTime"
-	let lastActionDateTimeKey = "lastActionDateTime"
-	let processingResultKey = "processingResult"
-	let messageKey = "message"
-	
+	private let statusKey = "status"
+	private let createdDateTimeKey = "createdDateTime"
+	private let lastActionDateTimeKey = "lastActionDateTime"
+	private let processingResultKey = "processingResult"
+	private let messageKey = "message"
 	
 	var status: SpeakerOperationResultStatus? // "running"
 	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
@@ -38,7 +37,6 @@ class SpeakerOperationResult {
 		}
 		return ""
 	}
-	
 	
 	init(fromJson dict: [String:Any], isoFormatter: ISO8601DateFormatter?) {
 		if let statusString = dict[statusKey] as? String, let status = SpeakerOperationResultStatus(rawValue: statusString) {
@@ -63,11 +61,4 @@ class SpeakerOperationResult {
 			}
 		}
 	}
-}
-
-enum SpeakerOperationResultStatus : String {
-	case notstarted // The operation is not started.
-	case running // The operation is running.
-	case failed // The operation is finished and failed.
-	case succeeded // The operation is finished and succeeded.
 }

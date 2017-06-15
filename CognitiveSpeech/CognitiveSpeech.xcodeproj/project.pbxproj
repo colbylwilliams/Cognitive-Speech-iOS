@@ -17,10 +17,18 @@
 		B549BB0E1EEEE71F002D3A23 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B549BB0D1EEEE71F002D3A23 /* StartViewController.swift */; };
 		B55845721EEF04C300DEC7B9 /* SpeakerIdClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845711EEF04C300DEC7B9 /* SpeakerIdClient.swift */; };
 		B55845741EEF057700DEC7B9 /* SpeakerIdUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845731EEF057700DEC7B9 /* SpeakerIdUrl.swift */; };
-		B55845761EEF16BF00DEC7B9 /* SpeakerIdKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845751EEF16BF00DEC7B9 /* SpeakerIdKey.swift */; };
 		B55845781EEF1DD100DEC7B9 /* SpeakerIdHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */; };
 		B558457A1EEF242A00DEC7B9 /* SpeakerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */; };
 		B558457C1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */; };
+		B5EA631F1EF2EECC002DEBA2 /* PipViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA631E1EF2EECC002DEBA2 /* PipViewController.swift */; };
+		B5EA63221EF2F430002DEBA2 /* SpeakerIdentificationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA63211EF2F430002DEBA2 /* SpeakerIdentificationProfile.swift */; };
+		B5EA63241EF2F450002DEBA2 /* SpeakerVerificationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA63231EF2F450002DEBA2 /* SpeakerVerificationProfile.swift */; };
+		B5EA63261EF2F46E002DEBA2 /* SpeakerProfileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA63251EF2F46E002DEBA2 /* SpeakerProfileType.swift */; };
+		B5EA63281EF2F49E002DEBA2 /* SpeakerVerificaitonResultResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA63271EF2F49E002DEBA2 /* SpeakerVerificaitonResultResult.swift */; };
+		B5EA632A1EF2F4BE002DEBA2 /* SpeakerResultConfidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA63291EF2F4BE002DEBA2 /* SpeakerResultConfidence.swift */; };
+		B5EA632C1EF2F500002DEBA2 /* SpeakerVerificationEnrollmentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA632B1EF2F500002DEBA2 /* SpeakerVerificationEnrollmentResult.swift */; };
+		B5EA632E1EF2F530002DEBA2 /* SpeakerIdentificationEnrollmentResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA632D1EF2F530002DEBA2 /* SpeakerIdentificationEnrollmentResult.swift */; };
+		B5EA63301EF2F563002DEBA2 /* SpeakerOperationResultStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EA632F1EF2F563002DEBA2 /* SpeakerOperationResultStatus.swift */; };
 		B5F747401EF0105E00F94F87 /* SpeakerVerificationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */; };
 		B5F747421EF013E800F94F87 /* SpeakerOperationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */; };
 		B5F747441EF0175900F94F87 /* SpeakerIdentificationReslut.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */; };
@@ -39,10 +47,18 @@
 		B549BB0D1EEEE71F002D3A23 /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 		B55845711EEF04C300DEC7B9 /* SpeakerIdClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdClient.swift; sourceTree = "<group>"; };
 		B55845731EEF057700DEC7B9 /* SpeakerIdUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdUrl.swift; sourceTree = "<group>"; };
-		B55845751EEF16BF00DEC7B9 /* SpeakerIdKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdKey.swift; sourceTree = "<group>"; };
 		B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdHeader.swift; sourceTree = "<group>"; };
 		B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerProfile.swift; sourceTree = "<group>"; };
 		B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
+		B5EA631E1EF2EECC002DEBA2 /* PipViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipViewController.swift; sourceTree = "<group>"; };
+		B5EA63211EF2F430002DEBA2 /* SpeakerIdentificationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdentificationProfile.swift; sourceTree = "<group>"; };
+		B5EA63231EF2F450002DEBA2 /* SpeakerVerificationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerVerificationProfile.swift; sourceTree = "<group>"; };
+		B5EA63251EF2F46E002DEBA2 /* SpeakerProfileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerProfileType.swift; sourceTree = "<group>"; };
+		B5EA63271EF2F49E002DEBA2 /* SpeakerVerificaitonResultResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerVerificaitonResultResult.swift; sourceTree = "<group>"; };
+		B5EA63291EF2F4BE002DEBA2 /* SpeakerResultConfidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerResultConfidence.swift; sourceTree = "<group>"; };
+		B5EA632B1EF2F500002DEBA2 /* SpeakerVerificationEnrollmentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerVerificationEnrollmentResult.swift; sourceTree = "<group>"; };
+		B5EA632D1EF2F530002DEBA2 /* SpeakerIdentificationEnrollmentResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdentificationEnrollmentResult.swift; sourceTree = "<group>"; };
+		B5EA632F1EF2F563002DEBA2 /* SpeakerOperationResultStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerOperationResultStatus.swift; sourceTree = "<group>"; };
 		B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerVerificationResult.swift; sourceTree = "<group>"; };
 		B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerOperationResult.swift; sourceTree = "<group>"; };
 		B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerIdentificationReslut.swift; sourceTree = "<group>"; };
@@ -79,25 +95,57 @@
 			isa = PBXGroup;
 			children = (
 				B549BAFB1EEEE6BE002D3A23 /* AppDelegate.swift */,
-				B549BAFF1EEEE6BE002D3A23 /* Main.storyboard */,
 				B549BB021EEEE6BE002D3A23 /* Assets.xcassets */,
-				B549BB041EEEE6BE002D3A23 /* LaunchScreen.storyboard */,
+				B5EA63311EF2F666002DEBA2 /* Client */,
+				B5EA63201EF2F3C7002DEBA2 /* Domain */,
 				B549BB071EEEE6BE002D3A23 /* Info.plist */,
-				B549BB0D1EEEE71F002D3A23 /* StartViewController.swift */,
-				B55845711EEF04C300DEC7B9 /* SpeakerIdClient.swift */,
-				B55845731EEF057700DEC7B9 /* SpeakerIdUrl.swift */,
-				B55845751EEF16BF00DEC7B9 /* SpeakerIdKey.swift */,
-				B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */,
+				B549BB041EEEE6BE002D3A23 /* LaunchScreen.storyboard */,
+				B549BAFF1EEEE6BE002D3A23 /* Main.storyboard */,
+				B5EA63321EF2F678002DEBA2 /* ViewControllers */,
+			);
+			path = CognitiveSpeech;
+			sourceTree = "<group>";
+		};
+		B5EA63201EF2F3C7002DEBA2 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
 				B55845791EEF242A00DEC7B9 /* SpeakerProfile.swift */,
-				B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */,
 				B5F7473F1EF0105E00F94F87 /* SpeakerVerificationResult.swift */,
 				B5F747411EF013E800F94F87 /* SpeakerOperationResult.swift */,
 				B5F747431EF0175900F94F87 /* SpeakerIdentificationReslut.swift */,
 				B524EB661EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift */,
 				B536AF151EF163B1005BF50E /* SpeakerEnrollmentResult.swift */,
+				B5EA63211EF2F430002DEBA2 /* SpeakerIdentificationProfile.swift */,
+				B5EA63231EF2F450002DEBA2 /* SpeakerVerificationProfile.swift */,
+				B5EA63251EF2F46E002DEBA2 /* SpeakerProfileType.swift */,
+				B5EA63271EF2F49E002DEBA2 /* SpeakerVerificaitonResultResult.swift */,
+				B5EA63291EF2F4BE002DEBA2 /* SpeakerResultConfidence.swift */,
+				B5EA632B1EF2F500002DEBA2 /* SpeakerVerificationEnrollmentResult.swift */,
+				B5EA632D1EF2F530002DEBA2 /* SpeakerIdentificationEnrollmentResult.swift */,
+				B5EA632F1EF2F563002DEBA2 /* SpeakerOperationResultStatus.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		B5EA63311EF2F666002DEBA2 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				B55845711EEF04C300DEC7B9 /* SpeakerIdClient.swift */,
+				B55845731EEF057700DEC7B9 /* SpeakerIdUrl.swift */,
+				B55845771EEF1DD100DEC7B9 /* SpeakerIdHeader.swift */,
 				B536AF171EF17248005BF50E /* SpeakerPreferenceKeys.swift */,
 			);
-			path = CognitiveSpeech;
+			path = Client;
+			sourceTree = "<group>";
+		};
+		B5EA63321EF2F678002DEBA2 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B549BB0D1EEEE71F002D3A23 /* StartViewController.swift */,
+				B558457B1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift */,
+				B5EA631E1EF2EECC002DEBA2 /* PipViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -171,14 +219,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B55845761EEF16BF00DEC7B9 /* SpeakerIdKey.swift in Sources */,
 				B55845741EEF057700DEC7B9 /* SpeakerIdUrl.swift in Sources */,
 				B549BAFC1EEEE6BE002D3A23 /* AppDelegate.swift in Sources */,
+				B5EA632A1EF2F4BE002DEBA2 /* SpeakerResultConfidence.swift in Sources */,
+				B5EA63281EF2F49E002DEBA2 /* SpeakerVerificaitonResultResult.swift in Sources */,
 				B5F747441EF0175900F94F87 /* SpeakerIdentificationReslut.swift in Sources */,
 				B5F747401EF0105E00F94F87 /* SpeakerVerificationResult.swift in Sources */,
+				B5EA63241EF2F450002DEBA2 /* SpeakerVerificationProfile.swift in Sources */,
 				B55845781EEF1DD100DEC7B9 /* SpeakerIdHeader.swift in Sources */,
+				B5EA63221EF2F430002DEBA2 /* SpeakerIdentificationProfile.swift in Sources */,
+				B5EA632E1EF2F530002DEBA2 /* SpeakerIdentificationEnrollmentResult.swift in Sources */,
+				B5EA63301EF2F563002DEBA2 /* SpeakerOperationResultStatus.swift in Sources */,
+				B5EA632C1EF2F500002DEBA2 /* SpeakerVerificationEnrollmentResult.swift in Sources */,
+				B5EA631F1EF2EECC002DEBA2 /* PipViewController.swift in Sources */,
 				B55845721EEF04C300DEC7B9 /* SpeakerIdClient.swift in Sources */,
 				B524EB671EF0C8D100D68E18 /* SpeakerProfileEnrollmentStatus.swift in Sources */,
+				B5EA63261EF2F46E002DEBA2 /* SpeakerProfileType.swift in Sources */,
 				B558457A1EEF242A00DEC7B9 /* SpeakerProfile.swift in Sources */,
 				B5F747421EF013E800F94F87 /* SpeakerOperationResult.swift in Sources */,
 				B558457C1EEF8B5C00DEC7B9 /* ProfileTableViewController.swift in Sources */,

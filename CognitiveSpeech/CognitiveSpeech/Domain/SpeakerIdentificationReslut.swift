@@ -10,8 +10,8 @@ import Foundation
 
 class SpeakerIdentificationReslut {
 	
-	let identifiedProfileIdKey = "identifiedProfileId"
-	let convenienceKey = "confidence"
+	private let identifiedProfileIdKey = "identifiedProfileId"
+	private let convenienceKey = "confidence"
 	
 	var identifiedProfileId: String?
 	var confidence: SpeakerResultConfidence? // "Normal", // [Low | Normal | High]

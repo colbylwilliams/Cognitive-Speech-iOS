@@ -53,13 +53,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		playRecording()
 	}
 	
-	@IBAction func createIdProfileTouched(_ sender: Any) {
-		SpeakerIdClient.shared.refreshAllProfiles() {
-//		SpeakerIdClient.shared.getAllIdentificationProfiles() { profiles in
-			
-		}
-	}
-	
 	@IBAction func shortAudioButtonTouched(_ sender: Any) {
 		SpeakerIdClient.shared.shortAudio = !SpeakerIdClient.shared.shortAudio
 		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
