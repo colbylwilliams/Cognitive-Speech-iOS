@@ -537,7 +537,7 @@ class SpeakerIdClient : NSObject {
 						self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
 							self.checkOperationStatus(operationUrl: operationUrl, callback: { result in
 								if let speakerResult = result.processingResult {
-									self.profileFrom(dict: speakerResult)
+									let _ = self.profileFrom(dict: speakerResult)
 									callback()
 								}
 							})
@@ -550,7 +550,7 @@ class SpeakerIdClient : NSObject {
 					
 					if let data = data, let result = try? JSONSerialization.jsonObject(with: data) as? [String:Any], let verificationResult = SpeakerVerificationEnrollmentResult(fromJson: result) {
 						print("verificationResult: status:\(verificationResult.enrollmentStatus?.rawValue ?? "nil"), enrollmentsCount: \(verificationResult.enrollmentsCount ?? -1), remainingEnrollments: \(verificationResult.remainingEnrollments ?? -1), phrase: \(verificationResult.phrase ?? "none")")
-						self.profileFrom(dict: result!)
+						let _ = self.profileFrom(dict: result!)
 						callback()
 					} else { self.checkForError(inData: data) }
 				}
@@ -645,7 +645,7 @@ class SpeakerIdClient : NSObject {
 						if speakerStatus == .succeeded || speakerStatus == .failed {
 							self.timer.invalidate()
 							self.timer = nil
-							self.profileFrom(dict: opJson)
+							let _ = self.profileFrom(dict: opJson)
 							callback(speakerResult)
 						}
 					}
