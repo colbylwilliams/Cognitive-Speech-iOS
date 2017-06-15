@@ -13,7 +13,6 @@ class SpeakerIdClient : NSObject {
 	
 	static let shared: SpeakerIdClient = {
 		let instance = SpeakerIdClient()
-		// setup code
 		return instance
 	}()
 	
@@ -26,12 +25,12 @@ class SpeakerIdClient : NSObject {
 		return _isoFormatter
 	}
 	
+	var verificationPhrases: [String] = []
 	
 	var shortAudio: Bool {
 		get { return UserDefaults.standard.bool(forKey: SpeakerPreferenceKeys.shortAudio) }
 		set(val) { UserDefaults.standard.set(val, forKey: SpeakerPreferenceKeys.shortAudio) }
 	}
-	
 	
 	var selectedProfileType: SpeakerProfileType = SpeakerProfileType(rawValue: UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType))!
 	
@@ -49,8 +48,6 @@ class SpeakerIdClient : NSObject {
 			}
 		}
 	}
-	
-	var verificationPhrases: [String] = []
 	
 	
 	// MARK - Profiles
@@ -632,7 +629,10 @@ class SpeakerIdClient : NSObject {
 						print(verificationResult)
 						callback(verificationResult)
 					}
-				} else { self.checkForError(inData: data) }
+				} else {
+					self.checkForError(inData: data)
+					callback(nil)
+				}
 			}).resume()
 		}
 	}
@@ -681,12 +681,8 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
-	
-	
 	func createRequest(url: URL, method: String = "GET", contentType: String = "") -> URLRequest {
-		
 		var request = URLRequest(url: url)
-		
 		request.httpMethod = method
 		
 		if !contentType.isEmpty {
@@ -697,7 +693,6 @@ class SpeakerIdClient : NSObject {
 		
 		return request
 	}
-	
 	
 	func toggleNetworkActivityIndicatorVisible(_ visible: Bool){
 		DispatchQueue.main.async {
