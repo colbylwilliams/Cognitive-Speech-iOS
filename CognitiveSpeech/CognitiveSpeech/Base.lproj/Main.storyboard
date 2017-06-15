@@ -57,9 +57,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="talkButtonTouchEnded:" destination="Tuf-Kh-Nc4" eventType="touchUpOutside" id="R8H-Xt-u6u"/>
-                                    <action selector="talkButtonTouchEnded:" destination="Tuf-Kh-Nc4" eventType="touchUpInside" id="Uv4-oe-KcM"/>
-                                    <action selector="talkButtonTouchStarted:" destination="Tuf-Kh-Nc4" eventType="touchDown" id="OpT-ry-6ZD"/>
+                                    <segue destination="bni-hw-HL3" kind="presentation" id="xFX-Cy-RIV"/>
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="yWB-eW-lzA">
@@ -164,22 +162,13 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZSM-P5-K9M">
-                                <rect key="frame" x="172" y="574" width="30" height="30"/>
-                                <state key="normal" title="pip"/>
-                                <connections>
-                                    <segue destination="bni-hw-HL3" kind="presentation" id="ndN-of-vWR"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="EDE-mr-iB5" firstAttribute="bottom" secondItem="hCn-hk-WI2" secondAttribute="bottom" constant="119" id="7G6-cB-wxe"/>
-                            <constraint firstItem="ZSM-P5-K9M" firstAttribute="top" secondItem="hCn-hk-WI2" secondAttribute="bottom" constant="26" id="Azp-9O-iYQ"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="centerX" secondItem="Vhp-xt-CBX" secondAttribute="centerX" id="FvK-5s-fFO"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="top" secondItem="EDE-mr-iB5" secondAttribute="top" constant="20" id="NLH-7g-9TV"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="top" secondItem="1NG-U3-hdZ" secondAttribute="bottom" constant="100" id="Rw3-RS-3mA"/>
-                            <constraint firstItem="ZSM-P5-K9M" firstAttribute="centerX" secondItem="Vhp-xt-CBX" secondAttribute="centerX" id="ZIF-xb-XTn"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="1NG-U3-hdZ" secondAttribute="leading" id="ejQ-sd-2dl"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="centerX" secondItem="EDE-mr-iB5" secondAttribute="centerX" id="jPy-NH-HCU"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="Vhp-xt-CBX" secondAttribute="leadingMargin" constant="20" id="n9x-gJ-re5"/>
@@ -297,10 +286,9 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zP2-dO-fnI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="UJs-uz-cmK" userLabel="Exit" sceneMemberID="exit"/>
                 <tapGestureRecognizer id="4wf-l7-cVB">
                     <connections>
-                        <segue destination="UJs-uz-cmK" kind="unwind" unwindAction="unwindWithSegue:" id="p5Z-EP-iUx"/>
+                        <action selector="viewTouched:" destination="bni-hw-HL3" id="x9Z-2i-ke2"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>

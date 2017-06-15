@@ -7,35 +7,168 @@
 //
 
 import UIKit
+import AVFoundation
 
-class PipViewController: UIViewController {
+class PipViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
 
 	@IBOutlet weak var backgroundView: UIVisualEffectView!
 	@IBOutlet weak var feedbackLabel: UILabel!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+	
+	@IBAction func viewTouched(_ sender: Any) {
+		finishRecording(success: true)
+	}
+	
+	//	var recordingSession: AVAudioSession?
+	var audioRecorder: AVAudioRecorder?
+	var audioPlayer: AVAudioPlayer?
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		
 		backgroundView.layer.cornerRadius = 5
 		backgroundView.layer.masksToBounds = true
-        // Do any additional setup after loading the view.
+		
+		feedbackLabel.text = "Initializing..."
+		
+//		recordingSession = AVAudioSession.sharedInstance()
     }
+	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		startRecording()
+	}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+	
+	func startRecording() {
+		print("Start recording...")
+		
+		let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.wav")
+		
+		let settings = [
+			AVFormatIDKey: Int(kAudioFormatLinearPCM),	// Encoding PCM
+			AVSampleRateKey: 16000,						// Rate 16K
+			AVNumberOfChannelsKey: 1,					// Channels Mono
+			AVEncoderBitRateKey: 16,					// Sample Format 16 bit
+			AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue
+		]
+		
+		do {
+			audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+			audioRecorder?.delegate = self
+			audioRecorder?.record()
+			
+			feedbackLabel.text = "Recording..."
+			
+		} catch let error as NSError {
+			print("audioSession error: \(error.localizedDescription)")
+			finishRecording(success: false)
+		}
+	}
+	
+	
+	func finishRecording(success: Bool) {
+		print("Stop recording...")
+		
+		audioRecorder?.stop()
+		//  audioRecorder = nil
+		
+		if success {
+			print("Recording succeeded")
+		} else {
+			print("Recording failed")
+		}
+	}
+	
+	
+	func playRecording() {
+		
+		if let recorder = audioRecorder, !recorder.isRecording {
+			
+			do {
+				try audioPlayer = AVAudioPlayer(contentsOf:recorder.url)
+				audioPlayer?.delegate = self
+				audioPlayer?.prepareToPlay()
+				audioPlayer?.play()
+				
+			} catch let error as NSError {
+				print("audioPlayer error: \(error.localizedDescription)")
+			}
+		}
+	}
+	
+	
+	// MARK: - AVAudioRecorderDelegate
+	
+	func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+		print("Audio Recorder finished recording: successful: \(flag)")
+		feedbackLabel.text = "Processing..."
+		if !flag {
+			finishRecording(success: false)
+			dismiss(animated: true, completion: nil)
+		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
+			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
+				switch SpeakerIdClient.shared.selectedProfileType {
+				case .identification:
+					SpeakerIdClient.shared.identifySpeaker(fileUrl: recorder.url, callback: { (result, profile) in
+						DispatchQueue.main.async {
+							let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
+							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
+								self.updateAndDismiss()
+							}))
+							self.present(alert, animated: true, completion: nil)
+						}
+					})
+				case .verification:
+					SpeakerIdClient.shared.verifySpeaker(fileUrl: recorder.url, callback: { result in
+						DispatchQueue.main.async {
+							let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
+							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
+								self.updateAndDismiss()
+							}))
+							self.present(alert, animated: true, completion: nil)
+						}
+					})
+				}
+			} else {
+				SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
+					DispatchQueue.main.async {
+						self.updateAndDismiss()
+					}
+				}
+			}
+		}
+	}
+	
+	func updateAndDismiss() {
+		if let navController = self.presentingViewController as? UINavigationController, let startController = navController.viewControllers.first as? StartViewController {
+			startController.updateUIforSelectedProfile()
+		}
+		
+		self.dismiss(animated: true, completion: nil)
+	}
+	
+	
+	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+		print("Audio Recorder Encode Error: \(error?.localizedDescription ?? "")")
+	}
+	
+	
+	// MARK: - AVAudioPlayerDelegate
+	
+	func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+		print("Audio Player finished playing: successful: \(flag)")
+	}
+	
+	func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+		print("Audio Player Decode Error: \(error?.localizedDescription ?? "")")
+	}
+	
+	
+	func getDocumentsDirectory() -> URL {
+		let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+		let documentsDirectory = paths[0]
+		return documentsDirectory
+	}
 }

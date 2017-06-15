@@ -17,6 +17,15 @@ class SpeakerIdClient : NSObject {
 		return instance
 	}()
 	
+	private	var _isoFormatter: ISO8601DateFormatter?
+	var isoFormatter: ISO8601DateFormatter? {
+		if _isoFormatter == nil {
+			_isoFormatter = ISO8601DateFormatter()
+			_isoFormatter?.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
+		}
+		return _isoFormatter
+	}
+	
 	
 	var shortAudio: Bool {
 		get { return UserDefaults.standard.bool(forKey: SpeakerPreferenceKeys.shortAudio) }
@@ -41,19 +50,10 @@ class SpeakerIdClient : NSObject {
 		}
 	}
 	
-	
-	private	var _isoFormatter: ISO8601DateFormatter?
-	var isoFormatter: ISO8601DateFormatter? {
-		if _isoFormatter == nil {
-			_isoFormatter = ISO8601DateFormatter()
-			_isoFormatter?.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-		}
-		return _isoFormatter
-	}
-	
-	
 	var verificationPhrases: [String] = []
 	
+	
+	// MARK - Profiles
 	
 	var profiles: [SpeakerProfile] {
 		switch selectedProfileType {
@@ -63,6 +63,67 @@ class SpeakerIdClient : NSObject {
 			return verificationProfiles
 		}
 	}
+	
+	var identificationProfiles: [SpeakerIdentificationProfile] = [] {
+		// willSet(newValue) {	print("Profiles WillSet") }
+		didSet {
+			// print("Profiles DidSet")
+			if let _ = identificationProfiles.first(where: { $0.profileId == selectedIdentificationProfileId }) {
+				
+			} else if identificationProfiles.count > 0 {
+				selectedIdentificationProfileId = identificationProfiles.first?.profileId
+			} else {
+				selectedIdentificationProfileId = nil
+			}
+		}
+	}
+	
+	var verificationProfiles: [SpeakerVerificationProfile] = [] {
+		// willSet(newValue) {	print("Profiles WillSet") }
+		didSet {
+			// print("Profiles DidSet")
+			if let _ = verificationProfiles.first(where: { $0.profileId == selectedVerificationProfileId }) {
+				
+			} else if verificationProfiles.count > 0 {
+				selectedVerificationProfileId = verificationProfiles.first?.profileId
+			} else {
+				selectedVerificationProfileId = nil
+			}
+		}
+	}
+	
+	
+	// MARK - Selected Profile
+	
+	var selectedProfile: SpeakerProfile? {
+		switch selectedProfileType {
+		case .identification:
+			return selectedIdentificationProfile
+		case .verification:
+			return selectedVerificationProfile
+		}
+	}
+	
+	var selectedIdentificationProfile: SpeakerIdentificationProfile? {
+		if let profileId = selectedIdentificationProfileId, let profile = identificationProfiles.first(where: { $0.profileId == profileId }) {
+			return profile
+		}
+		return nil
+	}
+	
+	var selectedVerificationProfile: SpeakerVerificationProfile? {
+		if let profileId = selectedVerificationProfileId, let profile = verificationProfiles.first(where: { $0.profileId == profileId }) {
+			return profile
+		}
+		return nil
+	}
+	
+	func isSelectedProfile(_ profileId: String) -> Bool {
+		return profileId == selectedProfileId
+	}
+	
+	
+	// MARK - Selected Profile ID
 	
 	private var selectedProfileId: String? {
 		get {
@@ -91,63 +152,6 @@ class SpeakerIdClient : NSObject {
 	private var selectedVerificationProfileId: String? {
 		get { return UserDefaults.standard.string(forKey: SpeakerPreferenceKeys.selectedVerificationProfileId) }
 		set(newVal) { UserDefaults.standard.setValue(newVal, forKey: SpeakerPreferenceKeys.selectedVerificationProfileId) }
-	}
-	
-	func isSelectedProfile(_ profileId: String) -> Bool {
-		return profileId == selectedProfileId
-	}
-	
-	
-	var selectedProfile: SpeakerProfile? {
-		switch selectedProfileType {
-		case .identification:
-			return selectedIdentificationProfile
-		case .verification:
-			return selectedVerificationProfile
-		}
-	}
-	
-	var selectedIdentificationProfile: SpeakerIdentificationProfile? {
-		if let profileId = selectedIdentificationProfileId, let profile = identificationProfiles.first(where: { $0.profileId == profileId }) {
-			return profile
-		}
-		return nil
-	}
-
-	var selectedVerificationProfile: SpeakerVerificationProfile? {
-		if let profileId = selectedVerificationProfileId, let profile = verificationProfiles.first(where: { $0.profileId == profileId }) {
-			return profile
-		}
-		return nil
-	}
-
-
-	var identificationProfiles: [SpeakerIdentificationProfile] = [] {
-		// willSet(newValue) {	print("Profiles WillSet") }
-		didSet {
-			// print("Profiles DidSet")
-			if let _ = identificationProfiles.first(where: { $0.profileId == selectedIdentificationProfileId }) {
-				
-			} else if identificationProfiles.count > 0 {
-				selectedIdentificationProfileId = identificationProfiles.first?.profileId
-			} else {
-				selectedIdentificationProfileId = nil
-			}
-		}
-	}
-
-	var verificationProfiles: [SpeakerVerificationProfile] = [] {
-		// willSet(newValue) {	print("Profiles WillSet") }
-		didSet {
-			// print("Profiles DidSet")
-			if let _ = verificationProfiles.first(where: { $0.profileId == selectedVerificationProfileId }) {
-				
-			} else if verificationProfiles.count > 0 {
-				selectedVerificationProfileId = verificationProfiles.first?.profileId
-			} else {
-				selectedVerificationProfileId = nil
-			}
-		}
 	}
 	
 	
@@ -349,7 +353,7 @@ class SpeakerIdClient : NSObject {
 		print("Refresh All \(selectedProfileType.string) Profiles...")
 		print("   deleting \(selectedProfileType.string) Profiles from memory")
 		
-		let cacheSelectedId = selectedProfileId
+		let cachedId = selectedProfileId
 		
 		switch selectedProfileType {
 		case .identification:
@@ -358,19 +362,13 @@ class SpeakerIdClient : NSObject {
 			verificationProfiles = []
 		}
 		
-		getAllProfiles(forceRefresh: true) {
-			// Persist the selected profile
-			if let cachedId = cacheSelectedId, let _ = self.profiles.first(where: { $0.profileId == cachedId }) {
-				self.selectedProfileId = cachedId
-			}
-			callback()
-		}
+		getAllProfiles(forceRefresh: true, selectedId: cachedId, callback: callback)
 	}
 	
 	
 	// MARK - Get All Profiles
 	
-	func getAllProfiles(forceRefresh: Bool? = nil, callback: @escaping () -> ()) {
+	func getAllProfiles(forceRefresh: Bool? = nil, selectedId: String? = nil, callback: @escaping () -> ()) {
 		print("Get All \(selectedProfileType.string) Profiles...")
 		
 		let force = forceRefresh ?? false
@@ -386,7 +384,16 @@ class SpeakerIdClient : NSObject {
 				
 				let request = createRequest(url: url)
 				
-				sendProfilesRequest(request: request, callback: callback)
+				// Cache selected profileId
+				let cacheSelectedId = selectedId ?? selectedProfileId
+				
+				sendProfilesRequest(request: request) {
+					// Persist the selected profileId
+					if let cachedId = cacheSelectedId, let _ = self.profiles.first(where: { $0.profileId == cachedId }) {
+						self.selectedProfileId = cachedId
+					}
+					callback()
+				}
 			}
 		} else {
 			print("   already attempted to get \(selectedProfileType.string) profiles, not going to try again")
@@ -544,7 +551,10 @@ class SpeakerIdClient : NSObject {
 						})
 						
 						RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
-					} else { self.checkForError(inData: data) }
+					} else {
+						self.checkForError(inData: data)
+						callback()
+					}
 					
 				case .verification:
 					
@@ -592,7 +602,10 @@ class SpeakerIdClient : NSObject {
 					
 					RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
 					
-				} else { self.checkForError(inData: data) }
+				} else {
+					self.checkForError(inData: data)
+					callback(nil, nil)
+				}
 			}).resume()
 		}
 	}

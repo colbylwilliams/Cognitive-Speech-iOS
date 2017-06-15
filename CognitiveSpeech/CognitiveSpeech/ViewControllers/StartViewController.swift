@@ -12,7 +12,7 @@ import AVFoundation
 class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
 	
 	var recordingSession: AVAudioSession?
-	var audioRecorder: AVAudioRecorder?
+//	var audioRecorder: AVAudioRecorder?
 	var audioPlayer: AVAudioPlayer?
 	
 	@IBOutlet weak var profileTitleLabel: UILabel!
@@ -37,20 +37,8 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		return _dateFormatter!
 	}
 	
-	
-	@IBAction func talkButtonTouchStarted(_ sender: Any) {
-		print("Start recording...")
-		startRecording()
-    }
-	
-	@IBAction func talkButtonTouchEnded(_ sender: Any) {
-		print("Stop recording...")
-		finishRecording(success: true)
-	}
-	
 	@IBAction func playButtonTouched(_ sender: Any) {
-		print("Play recording...")
-		playRecording()
+//		playRecording()
 	}
 	
 	@IBAction func shortAudioButtonTouched(_ sender: Any) {
@@ -103,10 +91,16 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		}
     }
 	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		print("StartViewController viewWillAppear")
+	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
+		print("StartViewController viewDidAppear")
 		updateUIforSelectedProfile()
 	}
 	
@@ -131,115 +125,8 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		profileTimeCountLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCount
 		profileRemainingLabel.text = SpeakerIdClient.shared.selectedProfile?.timeCountRemaining
 		
-		if !allowed { print("Permission request faliled") }
+		print("Recording Permission = \(allowed)")
 	}
-	
-	
-	func startRecording() {
-		
-		let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.wav")
-		
-		let settings = [
-			AVFormatIDKey: Int(kAudioFormatLinearPCM),	// Encoding PCM
-			AVSampleRateKey: 16000,						// Rate 16K
-			AVNumberOfChannelsKey: 1,					// Channels Mono
-			AVEncoderBitRateKey: 16,					// Sample Format 16 bit
-			AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue
-		]
-		
-		do {
-			audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-			audioRecorder?.delegate = self
-			audioRecorder?.record()
-			
-		} catch let error as NSError {
-			print("audioSession error: \(error.localizedDescription)")
-			finishRecording(success: false)
-		}
-	}
-	
-	
-	func finishRecording(success: Bool) {
-		
-		audioRecorder?.stop()
-//		audioRecorder = nil
-		
-		if success {
-			print("Recording succeeded")
-		} else {
-			print("Recording failed")
-		}
-	}
-	
-	
-	func playRecording() {
-		
-		if let recorder = audioRecorder, !recorder.isRecording {
-			
-			do {
-				try audioPlayer = AVAudioPlayer(contentsOf:recorder.url)
-				audioPlayer?.delegate = self
-				audioPlayer?.prepareToPlay()
-				audioPlayer?.play()
-				
-			} catch let error as NSError {
-				print("audioPlayer error: \(error.localizedDescription)")
-			}
-		}
-	}
-	
-	
-	// MARK: - AVAudioRecorderDelegate
-	
-	func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-		print("Audio Recorder finished recording: successful: \(flag)")
-		if !flag {
-			finishRecording(success: false)
-		} else { //if let profileId = SpeakerIdClient.shared.selected?.profileId {
-			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
-				switch SpeakerIdClient.shared.selectedProfileType {
-				case .identification:
-					SpeakerIdClient.shared.identifySpeaker(fileUrl: recorder.url, callback: { (result, profile) in
-						DispatchQueue.main.async {
-							let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
-							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: nil))
-							self.present(alert, animated: true, completion: nil)
-						}
-					})
-				case .verification:
-					SpeakerIdClient.shared.verifySpeaker(fileUrl: recorder.url, callback: { result in
-						DispatchQueue.main.async {
-							let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
-							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: nil))
-							self.present(alert, animated: true, completion: nil)
-						}
-					})
-				}
-			} else {
-				SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
-					DispatchQueue.main.async {
-						self.updateUIforSelectedProfile()
-					}
-				}
-			}
-		}
-	}
-	
-	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-		print("Audio Recorder Encode Error: \(error?.localizedDescription ?? "")")
-	}
-	
-	
-	// MARK: - AVAudioPlayerDelegate
-	
-	func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-		print("Audio Player finished playing: successful: \(flag)")
-	}
-	
-	func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-		print("Audio Player Decode Error: \(error?.localizedDescription ?? "")")
-	}
-	
 	
 	func getDocumentsDirectory() -> URL {
 		let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
