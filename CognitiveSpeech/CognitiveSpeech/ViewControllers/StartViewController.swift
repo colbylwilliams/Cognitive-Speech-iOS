@@ -9,11 +9,7 @@
 import UIKit
 import AVFoundation
 
-class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
-	
-	var recordingSession: AVAudioSession?
-//	var audioRecorder: AVAudioRecorder?
-	var audioPlayer: AVAudioPlayer?
+class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	@IBOutlet weak var profileTitleLabel: UILabel!
 	@IBOutlet weak var profileIdLabel: UILabel!
@@ -23,9 +19,12 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 	@IBOutlet weak var profileRemainingLabel: UILabel!
 	@IBOutlet weak var profileTimeCountLabel: UILabel!
 	
+	@IBOutlet var profileLabels: [UILabel]!
+	
 	@IBOutlet weak var talkButton: UIButton!
-	@IBOutlet weak var playButton: UIButton!
 	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
+	
+	@IBOutlet weak var speakerTypeSegmentedControl: UISegmentedControl!
 	
 	private	var _dateFormatter: DateFormatter?
 	var dateFormatter: DateFormatter? {
@@ -37,38 +36,19 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		return _dateFormatter!
 	}
 	
-	@IBAction func playButtonTouched(_ sender: Any) {
-//		playRecording()
-	}
+	var recordingSession: AVAudioSession?
 	
-	@IBAction func shortAudioButtonTouched(_ sender: Any) {
-		SpeakerIdClient.shared.shortAudio = !SpeakerIdClient.shared.shortAudio
-		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
-	}
-	
-	@IBOutlet weak var speakerTypeSegmentedControl: UISegmentedControl!
-	
-	@IBAction func speakerTypeSegmentedControlChanged(_ sender: Any) {
-		SpeakerIdClient.shared.setSelectedProfileType(typeInt: speakerTypeSegmentedControl.selectedSegmentIndex) {
-			DispatchQueue.main.async {
-				self.updateUIforSelectedProfile()
-			}
-		}
-	}
-	
-	@IBAction func unwind(segue:UIStoryboardSegue) { }
 	
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
 		
-		playButton.layer.cornerRadius = 6
-		talkButton.layer.cornerRadius = 6
+		talkButton.layer.cornerRadius = 5
 		
-		playButton.isEnabled = false
 		talkButton.isEnabled = false
+		talkButton.backgroundColor = UIColor.lightGray
 		
-		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "short" : "long"
+		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
 		
 		speakerTypeSegmentedControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType)
 		
@@ -91,31 +71,44 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPla
 		}
     }
 	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		
-		print("StartViewController viewWillAppear")
-	}
-	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
-		print("StartViewController viewDidAppear")
 		updateUIforSelectedProfile()
 	}
 	
 	
+	@IBAction func shortAudioButtonTouched(_ sender: Any) {
+		SpeakerIdClient.shared.shortAudio = !SpeakerIdClient.shared.shortAudio
+		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
+	}
+	
+	@IBAction func speakerTypeSegmentedControlChanged(_ sender: Any) {
+		SpeakerIdClient.shared.setSelectedProfileType(typeInt: speakerTypeSegmentedControl.selectedSegmentIndex) {
+			DispatchQueue.main.async {
+				self.updateUIforSelectedProfile()
+			}
+		}
+	}
+	
+	@IBAction func unwind(segue:UIStoryboardSegue) { }
+	
+	
 	func updateUIforSelectedProfile(recordingAllowed: Bool? = nil) {
 		
-		let allowed = recordingAllowed ?? (recordingSession?.recordPermission() == .granted) ?? false
+		let allowed = recordingAllowed ?? (recordingSession != nil && recordingSession!.recordPermission() == .granted)
 		
-		playButton.isEnabled = allowed
 		talkButton.isEnabled = allowed
+		talkButton.backgroundColor = allowed ? talkButton.tintColor : UIColor.lightGray
 		
 		let title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
 		talkButton.setTitle(title, for: .normal)
 		
 		navigationItem.rightBarButtonItem?.title = SpeakerIdClient.shared.selectedProfile?.name ?? "..."
+		
+		for label in profileLabels {
+			label.isHidden = SpeakerIdClient.shared.selectedProfile == nil
+		}
 		
 		profileTitleLabel.text = SpeakerIdClient.shared.selectedProfile?.name
 		profileIdLabel.text = SpeakerIdClient.shared.selectedProfile?.profileId

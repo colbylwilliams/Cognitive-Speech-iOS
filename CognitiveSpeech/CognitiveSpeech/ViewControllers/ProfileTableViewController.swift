@@ -20,14 +20,20 @@ class ProfileTableViewController: UITableViewController {
 		return _dateFormatter!
 	}
 	
-	@IBOutlet var addButton: UIBarButtonItem!
+	var selectedIndexPath: IndexPath?
+	
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
 		
 		title = "\(SpeakerIdClient.shared.selectedProfileType.string) Profiles"
+		
+		if let selectedProfileIndex = SpeakerIdClient.shared.selectedProfileIndex() {
+			selectedIndexPath = IndexPath(row: selectedProfileIndex, section: 0)
+		}
     }
-
+	
+	
 	@IBAction func refreshValueChanged(_ sender: UIRefreshControl) {
 		if sender.isRefreshing {
 			SpeakerIdClient.shared.refreshAllProfiles {
@@ -40,12 +46,12 @@ class ProfileTableViewController: UITableViewController {
 	}
 	
 	@IBAction func addButtonTouched(_ sender: Any) {
-		
-		
 		let alert = UIAlertController(title: "Create Profile", message: "Enter the profile owner's name", preferredStyle: .alert)
 		
 		alert.addTextField { textField in
 			textField.placeholder = "Name"
+			textField.returnKeyType = .done
+			textField.autocapitalizationType = .words
 		}
 		
 		alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -60,14 +66,7 @@ class ProfileTableViewController: UITableViewController {
 			}
 		}))
 		
-		present(alert, animated: true) {
-			
-		}
-	}
-	
-	override func setEditing(_ editing: Bool, animated: Bool) {
-		super.setEditing(editing, animated: animated)
-		navigationItem.leftBarButtonItem?.isEnabled = !editing
+		present(alert, animated: true, completion: nil)
 	}
 	
 	
@@ -80,7 +79,6 @@ class ProfileTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return SpeakerIdClient.shared.profiles.count
     }
-
 	
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileTableViewCell", for: indexPath)
@@ -88,64 +86,60 @@ class ProfileTableViewController: UITableViewController {
 		let profile = SpeakerIdClient.shared.profiles[indexPath.row]
 		
 		cell.textLabel?.text = profile.name
-		cell.detailTextLabel?.text = "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString(dateFormatter: dateFormatter))"
+		cell.detailTextLabel?.text = profile.enrollmentStatus?.rawValue// "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString(dateFormatter: dateFormatter))"
+		cell.detailTextLabel?.textColor = profile.enrollmentStatus?.color ?? UIColor.darkText
 		
-		cell.isSelected = SpeakerIdClient.shared.isSelectedProfile(profile.profileId)
+		cell.isSelected = selectedIndexPath == indexPath
 		cell.accessoryType = cell.isSelected ? .checkmark : .none
 		
         return cell
     }
 	
+	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		let action = UIContextualAction.init(style: .normal, title: "Reset") { (action, view, callback) in
+			self.resetCell(tableView, indexPath: indexPath)
+			callback(false)
+		}
+		action.backgroundColor = UIColor.orange
+		
+		return UISwipeActionsConfiguration(actions: [ action ] );
+	}
 	
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
+	func resetCell(_ tableView: UITableView, indexPath: IndexPath) {
+		if let profileId = SpeakerIdClient.shared.profiles[indexPath.row].profileId {
+			SpeakerIdClient.shared.resetProfileEnrollment(profileId: profileId) {
+				DispatchQueue.main.async {
+					tableView.reloadRows(at: [indexPath], with: .automatic)
+				}
+			}
+		}
+	}
 	
-	
-	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		let action = UIContextualAction.init(style: .destructive, title: "Delete") { (action, view, callback) in
 			if let profileId = SpeakerIdClient.shared.profiles[indexPath.row].profileId {
 				SpeakerIdClient.shared.deleteProfile(profileId: profileId) {
 					DispatchQueue.main.async {
 						tableView.deleteRows(at: [indexPath], with: .fade)
+						callback(true)
 					}
 				}
 			}
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-	
+		}
+		return UISwipeActionsConfiguration(actions: [ action ] );
+	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		SpeakerIdClient.shared.selectProfile(byIndex: indexPath.row)
-		tableView.reloadData()
+		selectIndexPath(tableView, indexPath: indexPath)
 	}
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+	
+	func selectIndexPath(_ tableView: UITableView, indexPath: IndexPath) {
+		SpeakerIdClient.shared.selectProfile(byIndex: indexPath.row)
+		var indexPaths: [IndexPath] = [indexPath]
+		if let oldIndexPath = selectedIndexPath {
+			indexPaths.append(oldIndexPath)
+		}
+		selectedIndexPath = indexPath
+		tableView.reloadRows(at: indexPaths, with: .automatic)
+	}
 }

@@ -9,37 +9,34 @@
 import UIKit
 import AVFoundation
 
-class PipViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
+class PipViewController: UIViewController, AVAudioRecorderDelegate {
 
 	@IBOutlet weak var backgroundView: UIVisualEffectView!
 	@IBOutlet weak var feedbackLabel: UILabel!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	
-	@IBAction func viewTouched(_ sender: Any) {
-		finishRecording(success: true)
-	}
-	
-	//	var recordingSession: AVAudioSession?
 	var audioRecorder: AVAudioRecorder?
-	var audioPlayer: AVAudioPlayer?
 	
 	override func viewDidLoad() {
-        super.viewDidLoad()
+		super.viewDidLoad()
 		
 		backgroundView.layer.cornerRadius = 5
 		backgroundView.layer.masksToBounds = true
 		
 		feedbackLabel.text = "Initializing..."
-		
-//		recordingSession = AVAudioSession.sharedInstance()
-    }
+	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
 		startRecording()
 	}
-
+	
+	
+	@IBAction func viewTouched(_ sender: Any) {
+		finishRecording(success: true)
+	}
+	
 	
 	func startRecording() {
 		print("Start recording...")
@@ -78,23 +75,6 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlaye
 			print("Recording succeeded")
 		} else {
 			print("Recording failed")
-		}
-	}
-	
-	
-	func playRecording() {
-		
-		if let recorder = audioRecorder, !recorder.isRecording {
-			
-			do {
-				try audioPlayer = AVAudioPlayer(contentsOf:recorder.url)
-				audioPlayer?.delegate = self
-				audioPlayer?.prepareToPlay()
-				audioPlayer?.play()
-				
-			} catch let error as NSError {
-				print("audioPlayer error: \(error.localizedDescription)")
-			}
 		}
 	}
 	
@@ -149,22 +129,9 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate, AVAudioPlaye
 		self.dismiss(animated: true, completion: nil)
 	}
 	
-	
 	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
 		print("Audio Recorder Encode Error: \(error?.localizedDescription ?? "")")
 	}
-	
-	
-	// MARK: - AVAudioPlayerDelegate
-	
-	func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-		print("Audio Player finished playing: successful: \(flag)")
-	}
-	
-	func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-		print("Audio Player Decode Error: \(error?.localizedDescription ?? "")")
-	}
-	
 	
 	func getDocumentsDirectory() -> URL {
 		let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)

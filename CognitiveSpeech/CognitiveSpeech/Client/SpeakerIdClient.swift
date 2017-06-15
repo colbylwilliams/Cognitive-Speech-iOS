@@ -119,6 +119,13 @@ class SpeakerIdClient : NSObject {
 		return profileId == selectedProfileId
 	}
 	
+	func selectedProfileIndex() -> Int? {
+		if let profileId = selectedProfileId {
+			return profiles.index(where: { $0.profileId == profileId })
+		}
+		return nil
+	}
+	
 	
 	// MARK - Selected Profile ID
 	
@@ -558,8 +565,10 @@ class SpeakerIdClient : NSObject {
 					if let data = data, let result = try? JSONSerialization.jsonObject(with: data) as? [String:Any], let verificationResult = SpeakerVerificationEnrollmentResult(fromJson: result) {
 						print("verificationResult: status:\(verificationResult.enrollmentStatus?.rawValue ?? "nil"), enrollmentsCount: \(verificationResult.enrollmentsCount ?? -1), remainingEnrollments: \(verificationResult.remainingEnrollments ?? -1), phrase: \(verificationResult.phrase ?? "none")")
 						let _ = self.profileFrom(dict: result!)
-						callback()
-					} else { self.checkForError(inData: data) }
+					} else {
+						self.checkForError(inData: data)
+					}
+					callback()
 				}
 				
 			}).resume()

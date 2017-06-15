@@ -35,24 +35,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1NG-U3-hdZ">
-                                <rect key="frame" x="36" y="360" width="302" height="44"/>
-                                <color key="backgroundColor" red="0.14117647059999999" green="0.69803921570000005" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
-                                <state key="normal" title="Play">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="playButtonTouched:" destination="Tuf-Kh-Nc4" eventType="touchUpInside" id="4VQ-N9-4Hk"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hCn-hk-WI2">
                                 <rect key="frame" x="36" y="504" width="302" height="44"/>
-                                <color key="backgroundColor" red="0.14117647059999999" green="0.69803921570000005" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.016735870390000001" green="0.65727025269999995" blue="0.95243710280000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="ryI-q0-aWA"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
                                 <state key="normal" title="...">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -61,7 +50,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="yWB-eW-lzA">
-                                <rect key="frame" x="40" y="84" width="294" height="234.5"/>
+                                <rect key="frame" x="40" y="100" width="294" height="234.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Colby" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heq-YN-oz4">
                                         <rect key="frame" x="0.0" y="0.0" width="294" height="33.5"/>
@@ -167,14 +156,10 @@
                         <constraints>
                             <constraint firstItem="EDE-mr-iB5" firstAttribute="bottom" secondItem="hCn-hk-WI2" secondAttribute="bottom" constant="119" id="7G6-cB-wxe"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="centerX" secondItem="Vhp-xt-CBX" secondAttribute="centerX" id="FvK-5s-fFO"/>
-                            <constraint firstItem="yWB-eW-lzA" firstAttribute="top" secondItem="EDE-mr-iB5" secondAttribute="top" constant="20" id="NLH-7g-9TV"/>
-                            <constraint firstItem="hCn-hk-WI2" firstAttribute="top" secondItem="1NG-U3-hdZ" secondAttribute="bottom" constant="100" id="Rw3-RS-3mA"/>
-                            <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="1NG-U3-hdZ" secondAttribute="leading" id="ejQ-sd-2dl"/>
+                            <constraint firstItem="yWB-eW-lzA" firstAttribute="top" secondItem="EDE-mr-iB5" secondAttribute="top" constant="36" id="NLH-7g-9TV"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="centerX" secondItem="EDE-mr-iB5" secondAttribute="centerX" id="jPy-NH-HCU"/>
                             <constraint firstItem="hCn-hk-WI2" firstAttribute="leading" secondItem="Vhp-xt-CBX" secondAttribute="leadingMargin" constant="20" id="n9x-gJ-re5"/>
                             <constraint firstItem="yWB-eW-lzA" firstAttribute="leading" secondItem="EDE-mr-iB5" secondAttribute="leading" constant="40" id="qsQ-da-mfU"/>
-                            <constraint firstItem="1NG-U3-hdZ" firstAttribute="centerX" secondItem="EDE-mr-iB5" secondAttribute="centerX" id="uO5-Ce-zar"/>
-                            <constraint firstItem="hCn-hk-WI2" firstAttribute="height" secondItem="1NG-U3-hdZ" secondAttribute="height" id="z7S-7s-gCQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="EDE-mr-iB5"/>
                     </view>
@@ -203,7 +188,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="playButton" destination="1NG-U3-hdZ" id="SuP-tS-R85"/>
                         <outlet property="profileCreatedLabel" destination="HL5-ql-agQ" id="aCo-T1-yG1"/>
                         <outlet property="profileIdLabel" destination="qCf-sx-akw" id="LDW-yR-kfH"/>
                         <outlet property="profileRemainingLabel" destination="nTe-Jx-Fud" id="rUp-7C-M6t"/>
@@ -214,6 +198,11 @@
                         <outlet property="shortAudioButton" destination="Jf5-ZA-qH4" id="WFT-BU-Fsf"/>
                         <outlet property="speakerTypeSegmentedControl" destination="b0A-6m-WuB" id="Tko-7t-hf2"/>
                         <outlet property="talkButton" destination="hCn-hk-WI2" id="k29-7F-wac"/>
+                        <outletCollection property="profileLabels" destination="cz1-fU-KNv" collectionClass="NSMutableArray" id="TIB-H5-UTC"/>
+                        <outletCollection property="profileLabels" destination="jDg-NJ-ZEi" collectionClass="NSMutableArray" id="YZM-j1-kF5"/>
+                        <outletCollection property="profileLabels" destination="VKs-lH-nlQ" collectionClass="NSMutableArray" id="RK8-fz-gQ2"/>
+                        <outletCollection property="profileLabels" destination="uyj-De-DtC" collectionClass="NSMutableArray" id="Cjp-0A-UmA"/>
+                        <outletCollection property="profileLabels" destination="lBu-Bx-SKD" collectionClass="NSMutableArray" id="iOV-IP-bdO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tXB-lw-WMD" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -337,7 +326,7 @@
                                             <rect key="frame" x="16" y="25.5" width="44" height="14.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
+                                            <color key="textColor" red="0.0" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -368,9 +357,6 @@
                             <action selector="refreshValueChanged:" destination="m4E-z4-S97" eventType="valueChanged" id="Inx-jN-CwJ"/>
                         </connections>
                     </refreshControl>
-                    <connections>
-                        <outlet property="addButton" destination="Aab-mw-05W" id="1Oc-Nl-bZg"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hI2-z3-TSv" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="8nX-Yv-Lle" userLabel="Exit" sceneMemberID="exit"/>
@@ -378,4 +364,5 @@
             <point key="canvasLocation" x="2036" y="6"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.016735870390000001" green="0.65727025269999995" blue="0.95243710280000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>
