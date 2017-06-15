@@ -23,6 +23,7 @@ class SpeakerOperationResult {
 	var enrollmentResult: SpeakerEnrollmentResult?
 	var identificationResult: SpeakerIdentificationReslut?
 	var message: String?
+	var processingResult: [String:Any]?
 	
 	func createdDateTimeString(dateFormatter: DateFormatter?) -> String {
 		if let createdDateTime = createdDateTime {
@@ -53,6 +54,7 @@ class SpeakerOperationResult {
 			self.message = message
 		}
 		if let processingResult = dict[processingResultKey] as? [String:Any] {
+			self.processingResult = processingResult
 			// Check if this is a SpeakerProfile or SpeakerIdentificationReslut
 			if let _ = processingResult["processingResult"] {
 				self.identificationResult = SpeakerIdentificationReslut(fromJson: processingResult)

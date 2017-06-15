@@ -151,6 +151,8 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
+	// MARK - Select Profile By Index
+	
 	func selectProfile(byIndex index: Int) {
 		switch selectedProfileType {
 		case .identification:
@@ -193,18 +195,19 @@ class SpeakerIdClient : NSObject {
 	var sentVerificationEmptyRequest = false
 	
 	
+	// MARK - Profile From Data
 	
-	func profileFrom(profileName name: String? = nil, dict: [String:Any]) {
+	func profileFrom(profileName name: String? = nil, dict: [String:Any]?) -> SpeakerProfile? {
 		switch selectedProfileType {
 		case .identification:
-			identificationProfileFrom(profileName: name, dict: dict)
+			return identificationProfileFrom(profileName: name, dict: dict)
 		case .verification:
-			verificationProfileFrom(profileName: name, dict: dict)
+			return verificationProfileFrom(profileName: name, dict: dict)
 		}
 	}
 	
-	func identificationProfileFrom(profileName: String? = nil, dict: [String:Any]) {
-		if let profileId = dict[SpeakerIdentificationProfile.profileIdKey] as? String ?? selectedIdentificationProfileId {
+	func identificationProfileFrom(profileName: String? = nil, dict: [String:Any]?) -> SpeakerIdentificationProfile? {
+		if let dict = dict, let profileId = dict[SpeakerIdentificationProfile.profileIdKey] as? String ?? selectedIdentificationProfileId {
 			print("   (\(profileId)) parsing Identification profile")
 			
 			var name = profileName
@@ -218,16 +221,19 @@ class SpeakerIdClient : NSObject {
 			if let profile = identificationProfiles.first(where: { $0.profileId == profileId }) {
 				print("   (\(profileId)) found existing profile with Id - updating existing profile")
 				profile.update(fromJson: dict, isoFormatter: isoFormatter)
+				return profile
 			} else {
 				print("   (\(profileId)) did not find existing profile with Id - creating new profile")
 				let profile = SpeakerIdentificationProfile(fromJson: dict, name: name, isoFormatter: isoFormatter)
 				identificationProfiles.append(profile)
+				return profile
 			}
 		}
+		return nil
 	}
 	
-	func verificationProfileFrom(profileName: String? = nil, dict: [String:Any]) {
-		if let profileId = dict[SpeakerVerificationProfile.profileIdKey] as? String ?? selectedVerificationProfileId {
+	func verificationProfileFrom(profileName: String? = nil, dict: [String:Any]?) -> SpeakerVerificationProfile? {
+		if let dict = dict, let profileId = dict[SpeakerVerificationProfile.profileIdKey] as? String ?? selectedVerificationProfileId {
 			print("   (\(profileId)) parsing Verification profile")
 			
 			var name = profileName
@@ -241,12 +247,15 @@ class SpeakerIdClient : NSObject {
 			if let profile = verificationProfiles.first(where: { $0.profileId == profileId }) {
 				print("   (\(profileId)) found existing profile with Id - updating existing profile")
 				profile.update(fromJson: dict, isoFormatter: isoFormatter)
+				return profile
 			} else {
 				print("   (\(profileId)) did not find existing profile with Id - creating new profile")
 				let profile = SpeakerVerificationProfile(fromJson: dict, name: name, isoFormatter: isoFormatter)
 				verificationProfiles.append(profile)
+				return profile
 			}
 		}
+		return nil
 	}
 	
 	
@@ -287,14 +296,23 @@ class SpeakerIdClient : NSObject {
 			var request = createRequest(url: url, method: "POST", contentType: SpeakerIdHeaders.contentTypeValue)
 			request.httpBody = data
 			
-			sendProfileRequest(request: request, profileName: name, callback: callback)
+			sendProfileRequest(request: request, profileName: name) { partialProfile in
+				if let partialProfile = partialProfile {
+					self.getProfile(profileId: partialProfile.profileId, callback: { completeProfile in
+						if let completeProfile = completeProfile {
+							self.selectedProfileId = completeProfile.profileId
+							callback()
+						} else { callback() }
+					})
+				} else { callback() }
+			}
 		}
 	}
 	
 	
 	// MARK - Get Profile
 	
-	func getProfile(url: URL, profileId: String,  callback: @escaping () -> ()) {
+	func getProfile(profileId: String,  callback: @escaping (SpeakerProfile?) -> ()) {
 		print("Get  \(selectedProfileType.string) Profiles...")
 		
 		if let url = selectedProfileType.url.url(withId: profileId) {
@@ -306,11 +324,32 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
+	// MARK - Send Profle Request
+	
+	func sendProfileRequest(request: URLRequest, profileName name: String? = nil, callback: @escaping (SpeakerProfile?) -> ()) {
+		toggleNetworkActivityIndicatorVisible(true)
+		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+			self.toggleNetworkActivityIndicatorVisible(false)
+			if let error = error {
+				print(error.localizedDescription)
+			}
+			if let data = data, let profileData = try? JSONSerialization.jsonObject(with: data) as? [String:Any], let profile = self.profileFrom(profileName: name, dict: profileData) {
+				callback(profile)
+			} else {
+				self.checkForError(inData: data)
+				callback(nil)
+			}
+		}).resume()
+	}
+	
+	
 	// MARK - Refresh All Profiles
 	
 	func refreshAllProfiles(callback: @escaping () -> ()) {
 		print("Refresh All \(selectedProfileType.string) Profiles...")
 		print("   deleting \(selectedProfileType.string) Profiles from memory")
+		
+		let cacheSelectedId = selectedProfileId
 		
 		switch selectedProfileType {
 		case .identification:
@@ -319,7 +358,13 @@ class SpeakerIdClient : NSObject {
 			verificationProfiles = []
 		}
 		
-		getAllProfiles(forceRefresh: true, callback: callback)
+		getAllProfiles(forceRefresh: true) {
+			// Persist the selected profile
+			if let cachedId = cacheSelectedId, let _ = self.profiles.first(where: { $0.profileId == cachedId }) {
+				self.selectedProfileId = cachedId
+			}
+			callback()
+		}
 	}
 	
 	
@@ -347,6 +392,27 @@ class SpeakerIdClient : NSObject {
 			print("   already attempted to get \(selectedProfileType.string) profiles, not going to try again")
 			callback()
 		}
+	}
+	
+	
+	// MARK - Send Profles Request
+	
+	func sendProfilesRequest(request: URLRequest, callback: @escaping () -> ()) {
+		toggleNetworkActivityIndicatorVisible(true)
+		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+			self.toggleNetworkActivityIndicatorVisible(false)
+			if let error = error {
+				print(error.localizedDescription)
+			}
+			if let data = data, let json = try? JSONSerialization.jsonObject(with: data) as? [[String:Any]] {
+				if let json = json {
+					for profile in json {
+						let _ = self.profileFrom(dict: profile)
+					}
+				}
+			} else { self.checkForError(inData: data) }
+			callback()
+		}).resume()
 	}
 	
 	
@@ -446,45 +512,6 @@ class SpeakerIdClient : NSObject {
 	}
 	
 	
-	// MARK - Requests
-	
-	func sendProfileRequest(request: URLRequest, profileName name: String? = nil, callback: @escaping () -> ()) {
-		toggleNetworkActivityIndicatorVisible(true)
-		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-			self.toggleNetworkActivityIndicatorVisible(false)
-			if let error = error {
-				print(error.localizedDescription)
-			}
-			if let data = data, let profile = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
-				if let profile = profile {
-					self.profileFrom(profileName: name, dict: profile)
-				}
-			} else { self.checkForError(inData: data) }
-			callback()
-		}).resume()
-	}
-	
-	
-	func sendProfilesRequest(request: URLRequest, callback: @escaping () -> ()) {
-		toggleNetworkActivityIndicatorVisible(true)
-		URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-			self.toggleNetworkActivityIndicatorVisible(false)
-			if let error = error {
-				print(error.localizedDescription)
-			}
-			if let data = data, let json = try? JSONSerialization.jsonObject(with: data) as? [[String:Any]] {
-				if let json = json {
-					for profile in json {
-						self.profileFrom(dict: profile)
-					}
-				}
-			} else { self.checkForError(inData: data) }
-			callback()
-		}).resume()
-	}
-	
-	
-	
 	// MARK - Profile Enrollment
 	
 	var timer: Timer!
@@ -493,7 +520,6 @@ class SpeakerIdClient : NSObject {
 		if let profileId = selectedProfileId, let url = selectedProfileType.url.enrollUrl(profileId, useShort: shortAudio) {
 			print("Create \(selectedProfileType.string) Profile Enrollment (\(profileId))...")
 			
-//			let request = createRequest(url: url, method: "POST", contentType: SpeakerIdHeaders.contentTypeValue)
 			let request = createRequest(url: url, method: "POST")
 			
 			toggleNetworkActivityIndicatorVisible(true)
@@ -509,9 +535,11 @@ class SpeakerIdClient : NSObject {
 						
 						print("Setting up Timer...")
 						self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
-							self.checkOperationStatus(operationUrl: operationUrl, callback: { r in
-								print("Finished!")
-								callback()
+							self.checkOperationStatus(operationUrl: operationUrl, callback: { result in
+								if let speakerResult = result.processingResult {
+									self.profileFrom(dict: speakerResult)
+									callback()
+								}
 							})
 						})
 						
@@ -552,12 +580,12 @@ class SpeakerIdClient : NSObject {
 					print("Setting up Timer...")
 					
 					self.timer = Timer.init(timeInterval: 2, repeats: true, block: { _ in
-						self.checkOperationStatus(operationUrl: operationUrl, callback: { r in
+						self.checkOperationStatus(operationUrl: operationUrl, callback: { result in
 							print("Finished!")
-							if let speakerResult = r.identificationResult, let identifiedProfileId = speakerResult.identifiedProfileId, let speakerProfile = self.identificationProfiles.first(where: {$0.profileId == identifiedProfileId}) {
-								callback(r, speakerProfile)
+							if let speakerResult = result.identificationResult, let identifiedProfileId = speakerResult.identifiedProfileId, let speakerProfile = self.identificationProfiles.first(where: {$0.profileId == identifiedProfileId}) {
+								callback(result, speakerProfile)
 							} else {
-								callback(r, nil)
+								callback(result, nil)
 							}
 						})
 					})
