@@ -173,7 +173,7 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		SpeakerIdClient.shared.createProfileEnrollment(fileUrl: url) { message in
 			DispatchQueue.main.async {
 				if let message = message {
-					self.updateFeedback(activityIndicator: false, feedbackLabel: "Error: \(message)", auxLabel: PipStrings.touchToDismiss)
+					self.updateFeedback(activityIndicator: false, feedbackLabel: "Error", detailLabel: message, auxLabel: PipStrings.touchToDismiss)
 				} else {
 					self.updateFeedback(activityIndicator: false, feedbackLabel: "Done!", auxLabel: PipStrings.touchToDismiss)
 					self.updateAndDismiss()
