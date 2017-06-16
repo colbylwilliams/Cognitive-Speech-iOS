@@ -81,42 +81,62 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	// MARK: - AVAudioRecorderDelegate
 	
+	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+		print("Audio Recorder Encode Error: \(error?.localizedDescription ?? "")")
+	}
+	
 	func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-		print("Audio Recorder finished recording: successful: \(flag)")
+		print("Audio Recorder finished recording (\(flag ? "successfully" : "unsuccessfully"))")
 		feedbackLabel.text = "Processing..."
 		if !flag {
 			finishRecording(success: false)
 			dismiss(animated: true, completion: nil)
 		} else { 
 			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
+				
 				switch SpeakerIdClient.shared.selectedProfileType {
 				case .identification:
-					SpeakerIdClient.shared.identifySpeaker(fileUrl: recorder.url, callback: { (result, profile) in
-						DispatchQueue.main.async {
-							let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
-							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
-								self.updateAndDismiss()
-							}))
-							self.present(alert, animated: true, completion: nil)
-						}
-					})
+					feedbackLabel.text = "Identifying..."
+					identifySpeaker(fileUrl: recorder.url)
 				case .verification:
-					SpeakerIdClient.shared.verifySpeaker(fileUrl: recorder.url, callback: { result in
-						DispatchQueue.main.async {
-							let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
-							alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
-								self.updateAndDismiss()
-							}))
-							self.present(alert, animated: true, completion: nil)
-						}
-					})
+					feedbackLabel.text = "Verifying..."
+					verifySpeaker(fileUrl: recorder.url)
 				}
+				
 			} else {
-				SpeakerIdClient.shared.createProfileEnrollment(fileUrl: recorder.url) {
-					DispatchQueue.main.async {
-						self.updateAndDismiss()
-					}
-				}
+				enrollSpeaker(fileUrl: recorder.url)
+			}
+		}
+	}
+	
+	func identifySpeaker(fileUrl url: URL) {
+		SpeakerIdClient.shared.identifySpeaker(fileUrl: url, callback: { (result, profile) in
+			DispatchQueue.main.async {
+				let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
+				alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
+					self.updateAndDismiss()
+				}))
+				self.present(alert, animated: true, completion: nil)
+			}
+		})
+	}
+	
+	func verifySpeaker(fileUrl url: URL) {
+		SpeakerIdClient.shared.verifySpeaker(fileUrl: url, callback: { result in
+			DispatchQueue.main.async {
+				let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
+				alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
+					self.updateAndDismiss()
+				}))
+				self.present(alert, animated: true, completion: nil)
+			}
+		})
+	}
+	
+	func enrollSpeaker(fileUrl url: URL) {
+		SpeakerIdClient.shared.createProfileEnrollment(fileUrl: url) {
+			DispatchQueue.main.async {
+				self.updateAndDismiss()
 			}
 		}
 	}
@@ -127,10 +147,6 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		}
 		
 		self.dismiss(animated: true, completion: nil)
-	}
-	
-	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-		print("Audio Recorder Encode Error: \(error?.localizedDescription ?? "")")
 	}
 	
 	func getDocumentsDirectory() -> URL {
