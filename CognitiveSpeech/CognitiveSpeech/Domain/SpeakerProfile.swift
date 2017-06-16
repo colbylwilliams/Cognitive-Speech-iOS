@@ -16,16 +16,17 @@ class SpeakerProfile {
 	private let enrollmentStatusKey = "enrollmentStatus"
 	
 	var name: String!
-	var profileId: String! // "111f427c-3791-468f-b709-fcef7660fff9",
+	var profileId: String!
 	var locale: String? = "en-US"
-	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
-	var lastActionDateTime: Date? // "2015-04-23T18:25:43.511Z",
-	var enrollmentStatus: SpeakerProfileEnrollmentStatus? // "Enrolled"
+	var createdDateTime: Date?
+	var lastActionDateTime: Date?
+	var enrollmentStatus: SpeakerProfileEnrollmentStatus?
 	
+	// Override
 	var timeCount: String? {
 		return ""
 	}
-	
+	// Override
 	var timeCountRemaining: String? {
 		return ""
 	}

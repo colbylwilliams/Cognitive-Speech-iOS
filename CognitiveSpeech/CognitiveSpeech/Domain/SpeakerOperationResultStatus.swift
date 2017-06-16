@@ -9,8 +9,8 @@
 import Foundation
 
 enum SpeakerOperationResultStatus : String {
-	case notstarted // The operation is not started.
-	case running // The operation is running.
-	case failed // The operation is finished and failed.
-	case succeeded // The operation is finished and succeeded.
+	case notstarted	// The operation is not started.
+	case running 	// The operation is running.
+	case failed 	// The operation is finished and failed.
+	case succeeded 	// The operation is finished and succeeded.
 }

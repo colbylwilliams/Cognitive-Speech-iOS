@@ -15,8 +15,8 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 	private let enrollmentSpeechTimeKey = "enrollmentSpeechTime"
 	private let remainingEnrollmentSpeechTimeKey = "remainingEnrollmentSpeechTime"
 	
-	var enrollmentSpeechTime: Double? // 0.0
-	var remainingEnrollmentSpeechTime: Double? // 0.0,
+	var enrollmentSpeechTime: Double?
+	var remainingEnrollmentSpeechTime: Double?
 	
 	override var timeCount: String? {
 		return "\(enrollmentSpeechTime ?? 0)"
@@ -38,7 +38,7 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 		print("Reset")
 		super.reset()
 		self.enrollmentSpeechTime = 0.0
-		self.remainingEnrollmentSpeechTime = 30.0
+		self.remainingEnrollmentSpeechTime = 30.0 // default
 	}
 	
 	override func update(fromJson dict: [String:Any], profileName name: String? = nil, isoFormatter: ISO8601DateFormatter?) {

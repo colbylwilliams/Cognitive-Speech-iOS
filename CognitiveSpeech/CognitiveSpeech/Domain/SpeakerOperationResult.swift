@@ -16,13 +16,21 @@ class SpeakerOperationResult {
 	private let processingResultKey = "processingResult"
 	private let messageKey = "message"
 	
-	var status: SpeakerOperationResultStatus? // "running"
-	var createdDateTime: Date? // "2015-04-23T18:25:43.511Z",
-	var lastActionDateTime: Date? // "2015-04-23T18:25:43.511Z",
+	var status: SpeakerOperationResultStatus?
+	var createdDateTime: Date?
+	var lastActionDateTime: Date?
 	var enrollmentResult: SpeakerEnrollmentResult?
 	var identificationResult: SpeakerIdentificationReslut?
 	var message: String?
 	var processingResult: [String:Any]?
+	
+	func identificationResultDetails(profileName name: String?) -> (title: String, detail: String) {
+		if let name = name {
+			return ("Speaker: \(name)", "Confidence: \(identificationResult?.confidence?.rawValue ?? "unknown")")
+		} else {
+			return ("Identification \(status?.rawValue ?? "failed")", "Reason: \(message ?? "unknown")")
+		}
+	}
 	
 	func createdDateTimeString(dateFormatter: DateFormatter?) -> String {
 		if let createdDateTime = createdDateTime {

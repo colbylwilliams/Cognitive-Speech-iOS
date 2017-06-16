@@ -21,7 +21,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	@IBOutlet var profileLabels: [UILabel]!
 	
-	@IBOutlet weak var auxButton: UIButton!
 	@IBOutlet weak var talkButton: UIButton!
 	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
 	
@@ -49,7 +48,9 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		phraseContainerView.isHidden = true
 		
 		talkButton.isEnabled = false
+		
 		talkButton.layer.cornerRadius = 5
+		
 		talkButton.backgroundColor = UIColor.lightGray
 		
 		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
@@ -96,6 +97,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	}
 	
 	@IBAction func unwind(segue:UIStoryboardSegue) { }
+	
 	
 	
 	func updateUIforSelectedProfile(recordingAllowed: Bool? = nil) {

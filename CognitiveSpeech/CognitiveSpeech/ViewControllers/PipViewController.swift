@@ -9,11 +9,26 @@
 import UIKit
 import AVFoundation
 
-class PipViewController: UIViewController, AVAudioRecorderDelegate {
+struct PipStrings {
+	static let recording = "Recording..."
+	static let initializing = "Initializing..."
+	static let identifying = "Identifying..."
+	static let processing = "Processing..."
+	static let verifying = "Verifying..."
+	static let training = "Training..."
+	static let touchToStop = "Touch anywhere to finish recording."
+	static let touchToDismiss = "Touch anywhere to dismiss."
+}
 
-	@IBOutlet weak var backgroundView: UIVisualEffectView!
+class PipViewController: UIViewController, AVAudioRecorderDelegate {
+	
+	@IBOutlet weak var auxLabel: UILabel!
 	@IBOutlet weak var feedbackLabel: UILabel!
+	@IBOutlet weak var feedbackDetailLabel: UILabel!
+	@IBOutlet weak var backgroundView: UIVisualEffectView!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+	@IBOutlet weak var feedbackLabelVerticalConstraint: NSLayoutConstraint!
+	@IBOutlet weak var activityIdnicatorOffsetConstraint: NSLayoutConstraint!
 	
 	var audioRecorder: AVAudioRecorder?
 	
@@ -23,7 +38,7 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		backgroundView.layer.cornerRadius = 5
 		backgroundView.layer.masksToBounds = true
 		
-		feedbackLabel.text = "Initializing..."
+		updateFeedback(feedbackLabel: PipStrings.initializing)
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -34,7 +49,11 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	
 	@IBAction func viewTouched(_ sender: Any) {
-		finishRecording(success: true)
+		if audioRecorder != nil && audioRecorder!.isRecording {
+			finishRecording(success: true)
+		} else if !activityIndicator.isAnimating {
+			updateAndDismiss()
+		}
 	}
 	
 	
@@ -56,7 +75,7 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 			audioRecorder?.delegate = self
 			audioRecorder?.record()
 			
-			feedbackLabel.text = "Recording..."
+			updateFeedback(feedbackLabel: PipStrings.recording, auxLabel: PipStrings.touchToStop)
 			
 		} catch let error as NSError {
 			print("audioSession error: \(error.localizedDescription)")
@@ -64,10 +83,9 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		}
 	}
 	
-	
 	func finishRecording(success: Bool) {
 		print("Stop recording...")
-		
+		updateFeedback(feedbackLabel: PipStrings.processing)
 		audioRecorder?.stop()
 		//  audioRecorder = nil
 		
@@ -79,6 +97,25 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 	}
 	
 	
+	func updateFeedback(activityIndicator activity: Bool = true, feedbackLabel feedback: String, detailLabel detail: String? = nil, auxLabel aux: String? = nil) {
+		if activity != activityIndicator.isAnimating {
+			if activity {
+				activityIndicator.startAnimating()
+			} else {
+				activityIndicator.stopAnimating()
+			}
+			activityIndicator.isHidden = !activity
+			activityIdnicatorOffsetConstraint.constant = activity ? 7 : 0
+		}
+		
+		auxLabel.text = aux
+		feedbackLabel.text = feedback
+		feedbackDetailLabel.text = detail
+		
+		feedbackLabelVerticalConstraint.constant = detail == nil ? 0 : 14
+	}
+	
+	
 	// MARK: - AVAudioRecorderDelegate
 	
 	func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
@@ -87,55 +124,47 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
 		print("Audio Recorder finished recording (\(flag ? "successfully" : "unsuccessfully"))")
-		feedbackLabel.text = "Processing..."
-		if !flag {
-			finishRecording(success: false)
-			dismiss(animated: true, completion: nil)
-		} else { 
+		if flag {
 			if SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled {
-				
 				switch SpeakerIdClient.shared.selectedProfileType {
 				case .identification:
-					feedbackLabel.text = "Identifying..."
 					identifySpeaker(fileUrl: recorder.url)
 				case .verification:
-					feedbackLabel.text = "Verifying..."
 					verifySpeaker(fileUrl: recorder.url)
 				}
-				
 			} else {
 				enrollSpeaker(fileUrl: recorder.url)
 			}
+		} else {
+			self.updateFeedback(activityIndicator: false, feedbackLabel: "Recording Error", auxLabel: PipStrings.touchToDismiss)
 		}
 	}
 	
 	func identifySpeaker(fileUrl url: URL) {
+		updateFeedback(feedbackLabel: PipStrings.identifying)
 		SpeakerIdClient.shared.identifySpeaker(fileUrl: url, callback: { (result, profile) in
+			let details = result?.identificationResultDetails(profileName: profile?.name)
 			DispatchQueue.main.async {
-				let alert = UIAlertController(title: profile?.name ?? result?.status?.rawValue ?? "unknown", message: result?.message ?? "", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
-					self.updateAndDismiss()
-				}))
-				self.present(alert, animated: true, completion: nil)
+				self.updateFeedback(activityIndicator: false, feedbackLabel: details?.title ?? "Unknown error", detailLabel: details?.detail, auxLabel: PipStrings.touchToDismiss)
 			}
 		})
 	}
 	
 	func verifySpeaker(fileUrl url: URL) {
+		updateFeedback(feedbackLabel: PipStrings.verifying)
 		SpeakerIdClient.shared.verifySpeaker(fileUrl: url, callback: { result in
+			let details = result?.verificationResultDetails
 			DispatchQueue.main.async {
-				let alert = UIAlertController(title: result?.result?.rawValue ?? "unknown", message: "confidence: \(result?.confidence?.rawValue ?? "")", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "Done", style: .cancel, handler: { action in
-					self.updateAndDismiss()
-				}))
-				self.present(alert, animated: true, completion: nil)
+				self.updateFeedback(activityIndicator: false, feedbackLabel: details?.title ?? "Unknown error", detailLabel: details?.detail, auxLabel: PipStrings.touchToDismiss)
 			}
 		})
 	}
 	
 	func enrollSpeaker(fileUrl url: URL) {
+		updateFeedback(feedbackLabel: PipStrings.training)
 		SpeakerIdClient.shared.createProfileEnrollment(fileUrl: url) {
 			DispatchQueue.main.async {
+				self.updateFeedback(activityIndicator: false, feedbackLabel: "Done!", auxLabel: PipStrings.touchToDismiss)
 				self.updateAndDismiss()
 			}
 		}
@@ -145,7 +174,6 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 		if let navController = self.presentingViewController as? UINavigationController, let startController = navController.viewControllers.first as? StartViewController {
 			startController.updateUIforSelectedProfile()
 		}
-		
 		self.dismiss(animated: true, completion: nil)
 	}
 	

@@ -11,4 +11,13 @@ import Foundation
 enum SpeakerVerificaitonResultResult : String {
 	case accept = "Accept"
 	case reject = "Reject"
+	
+	var rawValuePastTense: String {
+		switch self {
+		case .accept:
+			return "Accepted"
+		case .reject:
+			return "Rejected"
+		}
+	}
 }

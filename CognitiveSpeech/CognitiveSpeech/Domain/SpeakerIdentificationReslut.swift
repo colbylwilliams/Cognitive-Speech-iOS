@@ -14,7 +14,11 @@ class SpeakerIdentificationReslut {
 	private let convenienceKey = "confidence"
 	
 	var identifiedProfileId: String?
-	var confidence: SpeakerResultConfidence? // "Normal", // [Low | Normal | High]
+	var confidence: SpeakerResultConfidence?
+	
+	var confidenceString: String {
+		return confidence?.rawValue ?? "Unknown"
+	}
 	
 	init(fromJson dict: [String:Any]) {
 		if let identifiedProfileId = dict[identifiedProfileIdKey] as? String {

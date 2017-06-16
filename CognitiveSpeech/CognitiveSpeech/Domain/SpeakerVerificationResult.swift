@@ -14,9 +14,17 @@ class SpeakerVerificationResult {
 	private let convenienceKey = "confidence"
 	private let phraseKey = "phrase"
 	
-	var result: SpeakerVerificaitonResultResult? // "Accept", // [Accept | Reject]
-	var confidence: SpeakerResultConfidence? // "Normal", // [Low | Normal | High]
-	var phrase: String?  //"recognized phrase"
+	var result: SpeakerVerificaitonResultResult?
+	var confidence: SpeakerResultConfidence?
+	var phrase: String?
+	
+	var verificationResultDetails: (title: String, detail: String?) {
+		var detail: String? = nil
+		if let confidence = confidence?.rawValue {
+			detail = "Confidence: \(confidence)"
+		}
+		return ("Verification \(result?.rawValuePastTense ?? "failed")", detail)
+	}
 	
 	init(fromJson dict: [String:Any]) {
 		if let resultString = dict[resultKey] as? String, let result = SpeakerVerificaitonResultResult(rawValue: resultString) {

@@ -12,7 +12,7 @@ class SpeakerEnrollmentResult {
 	
 	private let enrollmentStatusKey = "enrollmentStatus"
 	
-	var enrollmentStatus: SpeakerProfileEnrollmentStatus? // "Enrolled"
+	var enrollmentStatus: SpeakerProfileEnrollmentStatus?
 	
 	init?(fromJson dict: [String:Any]?) {
 		if let dict = dict, let enrollmentStatusString = dict[enrollmentStatusKey] as? String, let enrollmentStatus = SpeakerProfileEnrollmentStatus(rawValue: enrollmentStatusString) {

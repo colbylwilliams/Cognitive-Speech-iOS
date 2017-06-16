@@ -14,9 +14,9 @@ class SpeakerIdentificationEnrollmentResult : SpeakerEnrollmentResult {
 	private let speechTimeKey = "speechTime"
 	private let enrollmentSpeechTimeKey = "enrollmentSpeechTime"
 	
-	var remainingEnrollmentSpeechTime: Double? // 0.0,
-	var speechTime: Double? // 0.0
-	var enrollmentSpeechTime: Double? // 0.0
+	var remainingEnrollmentSpeechTime: Double?
+	var speechTime: Double?
+	var enrollmentSpeechTime: Double?
 	
 	override init?(fromJson dict: [String:Any]?) {
 		super.init(fromJson: dict)
