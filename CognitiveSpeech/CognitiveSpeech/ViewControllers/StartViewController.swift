@@ -40,7 +40,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	var recordingSession: AVAudioSession?
 	
-	
 	override func viewDidLoad() {
 		
         super.viewDidLoad()
@@ -105,12 +104,12 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		let allowed = recordingAllowed ?? (recordingSession != nil && recordingSession!.recordPermission() == .granted)
 		
 		talkButton.isEnabled = allowed
-		talkButton.backgroundColor = allowed ? talkButton.tintColor : UIColor.lightGray
+		talkButton.backgroundColor = allowed ? navigationController?.navigationBar.barTintColor : UIColor.lightGray
 		
 		let title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
 		talkButton.setTitle(title, for: .normal)
 		
-		navigationItem.rightBarButtonItem?.title = SpeakerIdClient.shared.selectedProfile?.name ?? "..."
+//		navigationItem.rightBarButtonItem?.title = SpeakerIdClient.shared.selectedProfile?.name ?? "Profiles"
 		
 		for label in profileLabels {
 			label.isHidden = SpeakerIdClient.shared.selectedProfile == nil

@@ -6,9 +6,12 @@
 //  Copyright © 2017 Colby Williams. All rights reserved.
 //
 
+import CoreGraphics
 import UIKit
 
 class ProfileTableViewController: UITableViewController {
+	
+	@IBOutlet var emptyView: UIView!
 	
 	private	var _dateFormatter: DateFormatter?
 	var dateFormatter: DateFormatter? {
@@ -27,12 +30,12 @@ class ProfileTableViewController: UITableViewController {
         super.viewDidLoad()
 		
 		title = "\(SpeakerIdClient.shared.selectedProfileType.string) Profiles"
-		
-		if let selectedProfileIndex = SpeakerIdClient.shared.selectedProfileIndex() {
-			selectedIndexPath = IndexPath(row: selectedProfileIndex, section: 0)
-		}
     }
 	
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+		selectIndexPath(tableView, indexPath: nil)
+	}
 	
 	@IBAction func refreshValueChanged(_ sender: UIRefreshControl) {
 		if sender.isRefreshing {
@@ -61,6 +64,7 @@ class ProfileTableViewController: UITableViewController {
 				SpeakerIdClient.shared.createProfile(profileName: text) {
 					DispatchQueue.main.async {
 						self.tableView.reloadData()
+						self.selectIndexPath(self.tableView, indexPath: nil)
 					}
 				}
 			}
@@ -89,8 +93,8 @@ class ProfileTableViewController: UITableViewController {
 		cell.detailTextLabel?.text = profile.enrollmentStatus?.rawValue// "Status: \(profile.enrollmentStatus?.rawValue ?? "") | created:\(profile.createdDateTimeString(dateFormatter: dateFormatter))"
 		cell.detailTextLabel?.textColor = profile.enrollmentStatus?.color ?? UIColor.darkText
 		
-		cell.isSelected = selectedIndexPath == indexPath
-		cell.accessoryType = cell.isSelected ? .checkmark : .none
+//		cell.isSelected = selectedIndexPath == indexPath
+		cell.accessoryType = selectedIndexPath == indexPath ? .checkmark : .none
 		
         return cell
     }
@@ -121,6 +125,10 @@ class ProfileTableViewController: UITableViewController {
 				SpeakerIdClient.shared.deleteProfile(profileId: profileId) {
 					DispatchQueue.main.async {
 						tableView.deleteRows(at: [indexPath], with: .fade)
+						if indexPath == self.selectedIndexPath {
+							self.selectedIndexPath = nil
+						}
+						self.selectIndexPath(tableView, indexPath: nil)
 						callback(true)
 					}
 				}
@@ -134,13 +142,43 @@ class ProfileTableViewController: UITableViewController {
 		dismiss(animated: true, completion: nil)
 	}
 	
-	func selectIndexPath(_ tableView: UITableView, indexPath: IndexPath) {
-		SpeakerIdClient.shared.selectProfile(byIndex: indexPath.row)
-		var indexPaths: [IndexPath] = [indexPath]
+	
+	func selectIndexPath(_ tableView: UITableView, indexPath index: IndexPath?) {
+		var indexPath = index
+		
+		if indexPath == nil {
+			if let i = SpeakerIdClient.shared.selectedProfileIndex() {
+				indexPath = IndexPath(row: i, section: 0)
+			}
+		} else {
+			SpeakerIdClient.shared.selectProfile(byIndex: indexPath!.row)
+		}
+		
+		var indexPaths: [IndexPath] = []
+		
+		if let indexPath = indexPath {
+			indexPaths.append(indexPath)
+		}
+		
 		if let oldIndexPath = selectedIndexPath {
 			indexPaths.append(oldIndexPath)
 		}
+		
 		selectedIndexPath = indexPath
-		tableView.reloadRows(at: indexPaths, with: .automatic)
+		
+		if !indexPaths.isEmpty {
+			tableView.reloadRows(at: indexPaths, with: .automatic)
+		}
+		
+		if let navigationControllerView = navigationController?.view {
+			if SpeakerIdClient.shared.profiles.isEmpty {
+				if !emptyView.isDescendant(of: navigationControllerView) {
+					emptyView.frame = CGRect(x: 0, y: view.frame.minY + 0.5, width: view.frame.width, height: view.frame.height - 0.5)
+					navigationControllerView.addSubview(emptyView)
+				}
+			} else if emptyView.isDescendant(of: navigationControllerView) {
+				emptyView.removeFromSuperview()
+			}
+		}
 	}
 }
