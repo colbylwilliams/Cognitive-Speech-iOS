@@ -120,18 +120,20 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		
 		switch SpeakerIdClient.shared.selectedProfileType {
 		case .identification:
+			
 			phraseContainerView.isHidden = true
 			navigationItem.leftBarButtonItem?.isEnabled = true
+			
 		case .verification:
+			
 			phraseContainerView.isHidden = false
 			navigationItem.leftBarButtonItem?.isEnabled = false
+			
 			if let phraseController = childViewControllers.first as? PhraseTableViewController {
 				phraseController.phrase = SpeakerIdClient.shared.selectedVerificationProfile?.phrase
 				phraseController.tableView.reloadData()
 			}
 		}
-		
-		print("Recording Permission = \(allowed)")
 	}
 	
 	func setTalkButtonTitle() {
