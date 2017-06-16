@@ -22,7 +22,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	@IBOutlet var profileLabels: [UILabel]!
 	
 	@IBOutlet weak var talkButton: UIButton!
-	@IBOutlet weak var shortAudioButton: UIBarButtonItem!
+	@IBOutlet weak var shortAudioSwitch: UISwitch!
 	
 	@IBOutlet weak var phraseContainerView: UIView!
 	
@@ -47,12 +47,10 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		phraseContainerView.isHidden = true
 		
 		talkButton.isEnabled = false
-		
 		talkButton.layer.cornerRadius = 5
-		
 		talkButton.backgroundColor = UIColor.lightGray
 		
-		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
+		shortAudioSwitch.isOn = SpeakerIdClient.shared.shortAudio
 		
 		speakerTypeSegmentedControl.selectedSegmentIndex = UserDefaults.standard.integer(forKey: SpeakerPreferenceKeys.speakerType)
 		
@@ -82,9 +80,9 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	}
 	
 	
-	@IBAction func shortAudioButtonTouched(_ sender: Any) {
-		SpeakerIdClient.shared.shortAudio = !SpeakerIdClient.shared.shortAudio
-		shortAudioButton.title = SpeakerIdClient.shared.shortAudio ? "Short" : "Long"
+	@IBAction func shortAudioSwitchChanged(_ sender: UISwitch) {
+		SpeakerIdClient.shared.shortAudio = sender.isOn
+		setTalkButtonTitle()
 	}
 	
 	@IBAction func speakerTypeSegmentedControlChanged(_ sender: Any) {
@@ -98,7 +96,6 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	@IBAction func unwind(segue:UIStoryboardSegue) { }
 	
 	
-	
 	func updateUIforSelectedProfile(recordingAllowed: Bool? = nil) {
 		
 		let allowed = recordingAllowed ?? (recordingSession != nil && recordingSession!.recordPermission() == .granted)
@@ -106,10 +103,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		talkButton.isEnabled = allowed
 		talkButton.backgroundColor = allowed ? navigationController?.navigationBar.barTintColor : UIColor.lightGray
 		
-		let title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
-		talkButton.setTitle(title, for: .normal)
-		
-//		navigationItem.rightBarButtonItem?.title = SpeakerIdClient.shared.selectedProfile?.name ?? "Profiles"
+		setTalkButtonTitle()
 		
 		for label in profileLabels {
 			label.isHidden = SpeakerIdClient.shared.selectedProfile == nil
@@ -135,6 +129,14 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		}
 		
 		print("Recording Permission = \(allowed)")
+	}
+	
+	func setTalkButtonTitle() {
+		var title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
+		if SpeakerIdClient.shared.shortAudio {
+			title += " (short)"
+		}
+		talkButton.setTitle(title, for: .normal)
 	}
 	
 	func getDocumentsDirectory() -> URL {

@@ -45,13 +45,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hCn-hk-WI2">
-                                <rect key="frame" x="36" y="499" width="302" height="44"/>
+                                <rect key="frame" x="36" y="493" width="302" height="50"/>
                                 <color key="backgroundColor" red="0.1268855035" green="0.58810228109999996" blue="0.95351511239999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="ryI-q0-aWA"/>
+                                    <constraint firstAttribute="height" constant="50" id="ryI-q0-aWA"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
-                                <state key="normal" title="...">
+                                <state key="normal" title="Enroll">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -161,7 +161,7 @@
                                 </subviews>
                             </stackView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tNK-Yu-iRm">
-                                <rect key="frame" x="0.0" y="281" width="374" height="178"/>
+                                <rect key="frame" x="0.0" y="281" width="374" height="172"/>
                                 <connections>
                                     <segue destination="6Vx-zP-RI0" kind="embed" id="YsE-Ey-mg3"/>
                                 </connections>
@@ -184,10 +184,15 @@
                     </view>
                     <navigationItem key="navigationItem" id="RDL-0E-HpR">
                         <nil key="title"/>
-                        <barButtonItem key="leftBarButtonItem" image="i_more" id="Jf5-ZA-qH4">
-                            <connections>
-                                <action selector="shortAudioButtonTouched:" destination="Tuf-Kh-Nc4" id="P4b-PI-kyP"/>
-                            </connections>
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="nd2-fg-f3c">
+                            <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="SbW-r9-EOR">
+                                <rect key="frame" x="16" y="6.5" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="onTintColor" red="0.1003073379" green="0.46186941860000003" blue="0.82312768700000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="shortAudioSwitchChanged:" destination="Tuf-Kh-Nc4" eventType="valueChanged" id="mRD-SN-801"/>
+                                </connections>
+                            </switch>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="b0A-6m-WuB">
                             <rect key="frame" x="127" y="7" width="121" height="30"/>
@@ -215,7 +220,7 @@
                         <outlet property="profileTimeCountLabel" destination="zDR-Ob-BsM" id="Xxb-s6-arj"/>
                         <outlet property="profileTitleLabel" destination="heq-YN-oz4" id="kbd-OW-ayA"/>
                         <outlet property="profileUpdatedLabel" destination="lH5-jO-Ixl" id="wwl-jO-VaR"/>
-                        <outlet property="shortAudioButton" destination="Jf5-ZA-qH4" id="WFT-BU-Fsf"/>
+                        <outlet property="shortAudioSwitch" destination="SbW-r9-EOR" id="YWA-Ob-Yvg"/>
                         <outlet property="speakerTypeSegmentedControl" destination="b0A-6m-WuB" id="Tko-7t-hf2"/>
                         <outlet property="talkButton" destination="hCn-hk-WI2" id="k29-7F-wac"/>
                         <outletCollection property="profileLabels" destination="cz1-fU-KNv" collectionClass="NSMutableArray" id="TIB-H5-UTC"/>
@@ -234,7 +239,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="PhraseTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="6Vx-zP-RI0" customClass="PhraseTableViewController" customModule="CognitiveSpeech" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" separatorInsetReference="fromAutomaticInsets" rowHeight="30" sectionHeaderHeight="28" sectionFooterHeight="28" id="euI-DU-VYz">
-                        <rect key="frame" x="0.0" y="0.0" width="374" height="178"/>
+                        <rect key="frame" x="0.0" y="0.0" width="374" height="172"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="separatorColor" red="0.74109476799999996" green="0.74122357370000003" blue="0.74108666180000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -476,7 +481,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="i_more" width="4" height="16"/>
         <image name="i_profiles" width="25" height="25"/>
     </resources>
     <color key="tintColor" red="0.99989169840000003" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

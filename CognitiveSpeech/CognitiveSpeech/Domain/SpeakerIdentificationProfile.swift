@@ -19,11 +19,11 @@ class SpeakerIdentificationProfile: SpeakerProfile {
 	var remainingEnrollmentSpeechTime: Double?
 	
 	override var timeCount: String? {
-		return "\(enrollmentSpeechTime ?? 0)"
+		return "\(enrollmentSpeechTime ?? 0) seconds"
 	}
 	
 	override var timeCountRemaining: String? {
-		return "\(remainingEnrollmentSpeechTime ?? 0)"
+		return "\(remainingEnrollmentSpeechTime ?? 0) seconds"
 	}
 	
 	init(fromJson dict: [String:Any], name: String?, isoFormatter: ISO8601DateFormatter?) {

@@ -35,7 +35,13 @@
                                 <items>
                                     <navigationItem id="2Fj-xO-tTB">
                                         <nil key="title"/>
-                                        <barButtonItem key="leftBarButtonItem" image="i_more" id="OMg-fx-A4A"/>
+                                        <barButtonItem key="leftBarButtonItem" style="plain" id="mbq-fi-LCV">
+                                            <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="vkV-BK-Qip">
+                                                <rect key="frame" x="16" y="6.5" width="51" height="31"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="onTintColor" red="0.1003073379" green="0.46186941860000003" blue="0.82312768700000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            </switch>
+                                        </barButtonItem>
                                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="OPV-hY-2M7">
                                             <rect key="frame" x="127" y="7" width="121" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -63,7 +69,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="i_more" width="4" height="16"/>
         <image name="i_profiles" width="25" height="25"/>
     </resources>
 </document>
