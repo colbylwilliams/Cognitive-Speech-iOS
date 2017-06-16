@@ -13,5 +13,5 @@ struct SpeakerIdHeaders {
 	static let contentTypeValue = "application/json"
 	
 	static let subscriptionKey = "Ocp-Apim-Subscription-Key"
-	static let subscriptionValue = "0e71b5bf7bc645a182196bf58789268c"
+	static let subscriptionValue = ""
 }
