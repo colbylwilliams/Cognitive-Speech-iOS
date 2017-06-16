@@ -13,5 +13,5 @@ struct SpeakerIdHeaders {
 	static let contentTypeValue = "application/json"
 	
 	static let subscriptionKey = "Ocp-Apim-Subscription-Key"
-	static let subscriptionValue = ""
+	static let subscriptionValue = "" // https://portal.azure.com/#create/Microsoft.CognitiveServices/apitype/SpeakerRecognition/pricingtier/S0
 }
