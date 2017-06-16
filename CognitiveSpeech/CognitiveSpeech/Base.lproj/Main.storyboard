@@ -289,17 +289,17 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="HO3-9s-Bmk">
-                                            <rect key="frame" x="52.5" y="56" width="20" height="20"/>
+                                            <rect key="frame" x="53.5" y="56" width="20" height="20"/>
                                             <color key="color" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         </activityIndicatorView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n0M-0M-gvU">
-                                            <rect key="frame" x="78.5" y="55.5" width="97.5" height="21"/>
+                                            <rect key="frame" x="79.5" y="56.5" width="97.5" height="20.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Confidence: High" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ish-kU-aZq">
-                                            <rect key="frame" x="60.5" y="86.5" width="119" height="18"/>
+                                            <rect key="frame" x="60.5" y="87" width="119" height="18"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
@@ -317,7 +317,7 @@
                                         <constraint firstAttribute="centerY" secondItem="n0M-0M-gvU" secondAttribute="centerY" constant="14" id="MBg-9L-f3D"/>
                                         <constraint firstItem="hFf-Wo-7mg" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" id="N2h-9w-Iy8"/>
                                         <constraint firstItem="ish-kU-aZq" firstAttribute="top" secondItem="n0M-0M-gvU" secondAttribute="bottom" constant="10" id="PnX-9v-ewG"/>
-                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" constant="7" id="Wuo-88-n2l"/>
+                                        <constraint firstItem="n0M-0M-gvU" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" constant="8" id="Wuo-88-n2l"/>
                                         <constraint firstItem="ish-kU-aZq" firstAttribute="centerX" secondItem="DQu-HQ-kOo" secondAttribute="centerX" id="u13-94-app"/>
                                         <constraint firstItem="n0M-0M-gvU" firstAttribute="centerY" secondItem="HO3-9s-Bmk" secondAttribute="centerY" id="ye9-yv-z2m"/>
                                     </constraints>

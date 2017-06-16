@@ -105,12 +105,20 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 				activityIndicator.stopAnimating()
 			}
 			activityIndicator.isHidden = !activity
-			activityIdnicatorOffsetConstraint.constant = activity ? 7 : 0
+			activityIdnicatorOffsetConstraint.constant = activity ? 9 : 0
 		}
 		
 		auxLabel.text = aux
 		feedbackLabel.text = feedback
 		feedbackDetailLabel.text = detail
+		
+		if feedback == PipStrings.recording {
+			activityIndicator.color = UIColor.red
+			feedbackLabel.textColor = UIColor.red
+		} else {
+			activityIndicator.color = UIColor.white
+			feedbackLabel.textColor = UIColor.white
+		}
 		
 		feedbackLabelVerticalConstraint.constant = detail == nil ? 0 : 14
 	}
@@ -162,10 +170,14 @@ class PipViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	func enrollSpeaker(fileUrl url: URL) {
 		updateFeedback(feedbackLabel: PipStrings.training)
-		SpeakerIdClient.shared.createProfileEnrollment(fileUrl: url) {
+		SpeakerIdClient.shared.createProfileEnrollment(fileUrl: url) { message in
 			DispatchQueue.main.async {
-				self.updateFeedback(activityIndicator: false, feedbackLabel: "Done!", auxLabel: PipStrings.touchToDismiss)
-				self.updateAndDismiss()
+				if let message = message {
+					self.updateFeedback(activityIndicator: false, feedbackLabel: "Error: \(message)", auxLabel: PipStrings.touchToDismiss)
+				} else {
+					self.updateFeedback(activityIndicator: false, feedbackLabel: "Done!", auxLabel: PipStrings.touchToDismiss)
+					self.updateAndDismiss()
+				}
 			}
 		}
 	}

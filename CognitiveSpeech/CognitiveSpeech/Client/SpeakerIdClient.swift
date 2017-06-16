@@ -354,7 +354,7 @@ class SpeakerIdClient : NSObject {
 			if let data = data, let profileData = try? JSONSerialization.jsonObject(with: data) as? [String:Any], let profile = self.profileFrom(profileName: name, dict: profileData) {
 				callback(profile)
 			} else {
-				self.checkForError(inData: data)
+				let _ = self.checkForError(inData: data)
 				callback(nil)
 			}
 		}).resume()
@@ -431,7 +431,7 @@ class SpeakerIdClient : NSObject {
 						let _ = self.profileFrom(dict: profile)
 					}
 				}
-			} else { self.checkForError(inData: data) }
+			} else { let _ = self.checkForError(inData: data) }
 			callback()
 		}).resume()
 	}
@@ -537,7 +537,7 @@ class SpeakerIdClient : NSObject {
 	
 	var timer: Timer!
 	
-	func createProfileEnrollment(fileUrl: URL, callback: @escaping () -> ()) {
+	func createProfileEnrollment(fileUrl: URL, callback: @escaping (String?) -> ()) {
 		if let profileId = selectedProfileId, let url = selectedProfileType.url.enrollUrl(profileId, useShort: shortAudio) {
 			print("Create \(selectedProfileType.string) Profile Enrollment (\(profileId))...")
 			
@@ -559,15 +559,14 @@ class SpeakerIdClient : NSObject {
 							self.checkOperationStatus(operationUrl: operationUrl, callback: { result in
 								if let speakerResult = result.processingResult {
 									let _ = self.profileFrom(dict: speakerResult)
-									callback()
+									callback(nil)
 								}
 							})
 						})
 						
 						RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
 					} else {
-						self.checkForError(inData: data)
-						callback()
+						callback(self.checkForError(inData: data))
 					}
 					
 				case .verification:
@@ -575,10 +574,10 @@ class SpeakerIdClient : NSObject {
 					if let data = data, let result = try? JSONSerialization.jsonObject(with: data) as? [String:Any], let verificationResult = SpeakerVerificationEnrollmentResult(fromJson: result) {
 						print("verificationResult: status:\(verificationResult.enrollmentStatus?.rawValue ?? "nil"), enrollmentsCount: \(verificationResult.enrollmentsCount ?? -1), remainingEnrollments: \(verificationResult.remainingEnrollments ?? -1), phrase: \(verificationResult.phrase ?? "none")")
 						let _ = self.profileFrom(dict: result!)
+						callback(nil)
 					} else {
-						self.checkForError(inData: data)
+						callback(self.checkForError(inData: data))
 					}
-					callback()
 				}
 				
 			}).resume()
@@ -619,7 +618,7 @@ class SpeakerIdClient : NSObject {
 					RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
 					
 				} else {
-					self.checkForError(inData: data)
+					let _ = self.checkForError(inData: data)
 					callback(nil, nil)
 				}
 			}).resume()
@@ -649,7 +648,7 @@ class SpeakerIdClient : NSObject {
 						callback(verificationResult)
 					}
 				} else {
-					self.checkForError(inData: data)
+					let _ = self.checkForError(inData: data)
 					callback(nil)
 				}
 			}).resume()
@@ -682,21 +681,24 @@ class SpeakerIdClient : NSObject {
 						}
 					}
 				}
-			}  else { self.checkForError(inData: opData) }
+			}  else { let _ = self.checkForError(inData: opData) }
 		}).resume()
 	}
 	
 	
 	// MARK - Error Handling
 	
-	func checkForError(inData: Data?) {
+	func checkForError(inData: Data?) -> String? {
 		if let data = inData, let json = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
 			if let json = json, let error = json["error"] as? [String:Any], let code = error["code"] as? String, let message = error["message"] as? String {
 				print("Error: \(code) - \(message)")
-			} else if let str = String.init(data: data, encoding: String.Encoding.utf8) {
+				return message
+			} else if let str = String(data: data, encoding: String.Encoding.utf8) {
 				print("Error: \(str)")
+				return str
 			}
 		}
+		return nil
 	}
 	
 	
