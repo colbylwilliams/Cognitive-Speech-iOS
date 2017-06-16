@@ -591,7 +591,7 @@ class SpeakerIdClient : NSObject {
 	func identifySpeaker(fileUrl: URL, callback: @escaping (SpeakerOperationResult?, SpeakerProfile?) -> ()) {
 		print("Identifying Speaker...")
 		
-		if let url = SpeakerIdUrl.identify.identifyUrl(useShort: shortAudio, profileIds: identificationProfiles.map { $0.profileId }) {
+		if let url = SpeakerIdUrl.identify.identifyUrl(useShort: shortAudio, profileIds: identificationProfiles.filter({ $0.enrollmentStatus == .enrolled }).map { $0.profileId }) {
 			
 			let request = createRequest(url: url, method: "POST")
 			
