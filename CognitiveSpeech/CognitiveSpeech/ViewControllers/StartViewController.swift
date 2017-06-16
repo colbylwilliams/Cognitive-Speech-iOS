@@ -23,6 +23,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	@IBOutlet weak var talkButton: UIButton!
 	@IBOutlet weak var shortAudioSwitch: UISwitch!
+	@IBOutlet weak var shortAudioSwitchBarItem: UIBarButtonItem!
 	
 	@IBOutlet weak var phraseContainerView: UIView!
 	
@@ -120,8 +121,10 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 		switch SpeakerIdClient.shared.selectedProfileType {
 		case .identification:
 			phraseContainerView.isHidden = true
+			navigationItem.leftBarButtonItem?.isEnabled = true
 		case .verification:
 			phraseContainerView.isHidden = false
+			navigationItem.leftBarButtonItem?.isEnabled = false
 			if let phraseController = childViewControllers.first as? PhraseTableViewController {
 				phraseController.phrase = SpeakerIdClient.shared.selectedVerificationProfile?.phrase
 				phraseController.tableView.reloadData()
@@ -133,7 +136,7 @@ class StartViewController: UIViewController, AVAudioRecorderDelegate {
 	
 	func setTalkButtonTitle() {
 		var title = SpeakerIdClient.shared.selectedProfile?.enrollmentStatus == .enrolled ? SpeakerIdClient.shared.selectedProfileType == .identification ? "Identify" : "Verify" : "Enroll";
-		if SpeakerIdClient.shared.shortAudio {
+		if SpeakerIdClient.shared.selectedProfileType == .identification && SpeakerIdClient.shared.shortAudio {
 			title += " (short)"
 		}
 		talkButton.setTitle(title, for: .normal)

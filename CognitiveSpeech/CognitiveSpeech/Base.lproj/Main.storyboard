@@ -221,6 +221,7 @@
                         <outlet property="profileTitleLabel" destination="heq-YN-oz4" id="kbd-OW-ayA"/>
                         <outlet property="profileUpdatedLabel" destination="lH5-jO-Ixl" id="wwl-jO-VaR"/>
                         <outlet property="shortAudioSwitch" destination="SbW-r9-EOR" id="YWA-Ob-Yvg"/>
+                        <outlet property="shortAudioSwitchBarItem" destination="nd2-fg-f3c" id="nBh-u8-Fg0"/>
                         <outlet property="speakerTypeSegmentedControl" destination="b0A-6m-WuB" id="Tko-7t-hf2"/>
                         <outlet property="talkButton" destination="hCn-hk-WI2" id="k29-7F-wac"/>
                         <outletCollection property="profileLabels" destination="cz1-fU-KNv" collectionClass="NSMutableArray" id="TIB-H5-UTC"/>
@@ -249,11 +250,11 @@
                                 <rect key="frame" x="0.0" y="28" width="374" height="30"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fta-jq-WaM" id="gd5-WE-xcv">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="29.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="374" height="30"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="faP-6D-TtQ">
-                                            <rect key="frame" x="36" y="0.0" width="323" height="29.5"/>
+                                            <rect key="frame" x="36" y="0.0" width="323" height="29"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                             <color key="textColor" red="0.12939286229999999" green="0.12942266459999999" blue="0.12939092520000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -394,18 +395,18 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TLS-nP-T0s" id="gzi-3z-QWg">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tXH-4c-VPX">
-                                            <rect key="frame" x="16" y="5" width="33.5" height="20.5"/>
+                                            <rect key="frame" x="16" y="5" width="34" height="20"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.12939286229999999" green="0.12942266459999999" blue="0.12939092520000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VyH-eh-sP1">
-                                            <rect key="frame" x="16" y="25.5" width="44" height="14.5"/>
+                                            <rect key="frame" x="16" y="25" width="44" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" red="0.0" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
