@@ -1,5 +1,5 @@
 //
-//  IdentificationReslut.swift
+//  SpeakerIdentificationReslut.swift
 //  CognitiveSpeech
 //
 //  Created by Colby Williams on 6/13/17.
